@@ -337,7 +337,7 @@ public class BreakTracking {
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < 16; x++) {
 					for (int z = 0; z < 16; z++) {
-						Block b = chunk.getBlock(x, Math.abs(loc.getWorld().getMinHeight()) - y, z);
+						Block b = chunk.getBlock(x, Y - Math.abs(loc.getWorld().getMinHeight()), z);
 						if (b.isEmpty() || b.isLiquid()) {
 							int bloc = (( x << 4) + z);
 							int quad = (block_id / 64);
@@ -564,7 +564,7 @@ public class BreakTracking {
 						for (int z = 0; z < 16; z++) {
 							//Block b = chunk.getBlock(x, y, z);
 							//if (b.isEmpty() || b.isLiquid()) {
-							Material m = chunkS.getBlockType(x, Math.abs(loc.getWorld().getMinHeight()) - y, z);
+							Material m = chunkS.getBlockType(x, Y - Math.abs(loc.getWorld().getMinHeight()), z);
 							if (Material.AIR.equals(m) || Material.WATER.equals(m) || Material.LAVA.equals(m)) {
 								int bloc = ((x << 4) + z);
 								int quad = (block_id / 64);
@@ -594,7 +594,7 @@ public class BreakTracking {
 			// quick layer scan for air and water
 			for (int x = 0; x < 16; x++) {
 				for (int z = 0; z < 16; z++) {
-					Block b = chunk.getBlock(x, Math.abs(loc.getWorld().getMinHeight()) - Y, z);
+					Block b = chunk.getBlock(x, Y - Math.abs(loc.getWorld().getMinHeight()), z);
 					if (b.isEmpty() || b.isLiquid()) {
 						layers[Y]++;
 					}
