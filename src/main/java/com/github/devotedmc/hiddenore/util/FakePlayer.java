@@ -1,9 +1,23 @@
 package com.github.devotedmc.hiddenore.util;
 
+import com.destroystokyo.paper.ClientOption;
+import com.destroystokyo.paper.Title;
+import com.destroystokyo.paper.block.TargetBlockInfo;
+import com.destroystokyo.paper.block.TargetBlockInfo.FluidMode;
+import com.destroystokyo.paper.entity.TargetEntityInfo;
+import com.destroystokyo.paper.profile.PlayerProfile;
 import java.net.InetSocketAddress;
-import java.util.*;
-
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Chunk;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
@@ -74,15 +88,6 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
-
-import com.destroystokyo.paper.ClientOption;
-import com.destroystokyo.paper.Title;
-import com.destroystokyo.paper.block.TargetBlockInfo;
-import com.destroystokyo.paper.block.TargetBlockInfo.FluidMode;
-import com.destroystokyo.paper.entity.TargetEntityInfo;
-import com.destroystokyo.paper.profile.PlayerProfile;
-
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -3254,5 +3259,25 @@ public class FakePlayer implements Player {
 	public void updateTitle(Title arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public int getBeeStingerCooldown() {
+		return 0;
+	}
+
+	@Override
+	public void setBeeStingerCooldown(int ticks) {
+
+	}
+
+	@Override
+	public int getBeeStingersInBody() {
+		return 0;
+	}
+
+	@Override
+	public void setBeeStingersInBody(int count) {
+
 	}
 }
