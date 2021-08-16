@@ -205,7 +205,7 @@ public class FakePlayer implements Player {
 			public int firstEmpty() {
 				return 0;
 			}
-			
+
 			@Override
 			public void remove(Material material) throws IllegalArgumentException {
 			}
@@ -1600,6 +1600,29 @@ public class FakePlayer implements Player {
 
 	}
 
+	/**
+	 * Send a sign change. This fakes a sign change packet for a user at
+	 * a certain location. This will not actually change the world in any way.
+	 * This method will use a sign at the location's block or a faked sign
+	 * sent via
+	 * {@link #sendBlockChange(Location, Material, byte)}.
+	 * <p>
+	 * If the client does not have a sign at the given location it will
+	 * display an error message to the user.
+	 *
+	 * @param loc            the location of the sign
+	 * @param lines          the new text on the sign or null to clear it
+	 * @param dyeColor       the color of the sign
+	 * @param hasGlowingText whether the text of the sign should glow as if dyed with a glowing ink sac
+	 * @throws IllegalArgumentException if location is null
+	 * @throws IllegalArgumentException if dyeColor is null
+	 * @throws IllegalArgumentException if lines is non-null and has a length less than 4
+	 */
+	@Override
+	public void sendSignChange(@NotNull Location loc, @Nullable List<Component> lines, @NotNull DyeColor dyeColor, boolean hasGlowingText) throws IllegalArgumentException {
+
+	}
+
 	/*@Override
 	public void sendBlockChange(Location loc, int material, byte data) {
 
@@ -2217,7 +2240,7 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void setCooldown(Material arg0, int arg1) {
-		
+
 	}
 
 	/**
@@ -2232,12 +2255,12 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void setShoulderEntityLeft(Entity arg0) {
-		
+
 	}
 
 	@Override
 	public void setShoulderEntityRight(Entity arg0) {
-		
+
 	}
 
 	@Override
@@ -2292,7 +2315,7 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void setPortalCooldown(int arg0) {
-		
+
 	}
 
 	@Override
@@ -2307,32 +2330,32 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void playSound(Location arg0, Sound arg1, SoundCategory arg2, float arg3, float arg4) {
-		
+
 	}
 
 	@Override
 	public void playSound(Location arg0, String arg1, SoundCategory arg2, float arg3, float arg4) {
-		
+
 	}
 
 	@Override
 	public void sendTitle(String arg0, String arg1, int arg2, int arg3, int arg4) {
-		
+
 	}
 
 	@Override
 	public void setResourcePack(String arg0, byte[] arg1) {
-		
+
 	}
 
 	@Override
 	public void stopSound(Sound arg0, SoundCategory arg1) {
-		
+
 	}
 
 	@Override
 	public void stopSound(String arg0, SoundCategory arg1) {
-		
+
 	}
 
 	@Override
@@ -2347,12 +2370,12 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void setSwimming(boolean arg0) {
-		
+
 	}
 
 	@Override
 	public void sendBlockChange(Location arg0, BlockData arg1) {
-		
+
 	}
 
 	/**
@@ -2417,7 +2440,7 @@ public class FakePlayer implements Player {
 	@Override
 	public void wakeup(boolean setSpawnLocation) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -2483,7 +2506,7 @@ public class FakePlayer implements Player {
 	@Override
 	public <T> void setMemory(MemoryKey<T> memoryKey, T memoryValue) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -2495,7 +2518,7 @@ public class FakePlayer implements Player {
 	@Override
 	public void setAbsorptionAmount(double arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -2507,7 +2530,7 @@ public class FakePlayer implements Player {
 	@Override
 	public void setRotation(float yaw, float pitch) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -2531,7 +2554,31 @@ public class FakePlayer implements Player {
 	@Override
 	public void sendSignChange(Location loc, String[] lines, DyeColor dyeColor) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	/**
+	 * Send a sign change. This fakes a sign change packet for a user at
+	 * a certain location. This will not actually change the world in any way.
+	 * This method will use a sign at the location's block or a faked sign
+	 * sent via
+	 * {@link #sendBlockChange(Location, Material, byte)}.
+	 * <p>
+	 * If the client does not have a sign at the given location it will
+	 * display an error message to the user.
+	 *
+	 * @param loc            the location of the sign
+	 * @param lines          the new text on the sign or null to clear it
+	 * @param dyeColor       the color of the sign
+	 * @param hasGlowingText if the sign's text should be glowing
+	 * @throws IllegalArgumentException if location is null
+	 * @throws IllegalArgumentException if dyeColor is null
+	 * @throws IllegalArgumentException if lines is non-null and has a length less than 4
+	 * @deprecated Deprecated in favour of {@link #sendSignChange(Location, List, DyeColor, boolean)}
+	 */
+	@Override
+	public void sendSignChange(@NotNull Location loc, @Nullable String[] lines, @NotNull DyeColor dyeColor, boolean hasGlowingText) throws IllegalArgumentException {
+
 	}
 
 	@Override
@@ -2571,7 +2618,7 @@ public class FakePlayer implements Player {
 	@Override
 	public void openBook(ItemStack book) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -2595,19 +2642,19 @@ public class FakePlayer implements Player {
 	@Override
 	public void attack(Entity target) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void swingMainHand() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void swingOffHand() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -2619,19 +2666,19 @@ public class FakePlayer implements Player {
 	@Override
 	public void sendExperienceChange(float progress) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void sendExperienceChange(float progress, int level) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void closeInventory(Reason arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -2673,7 +2720,7 @@ public class FakePlayer implements Player {
 	@Override
 	public void openSign(Sign arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -2703,7 +2750,7 @@ public class FakePlayer implements Player {
 	@Override
 	public void clearActiveItem() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -2805,55 +2852,55 @@ public class FakePlayer implements Player {
 	@Override
 	public void playPickupItemAnimation(Item arg0, int arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setArrowCooldown(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setArrowsInBody(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setArrowsStuck(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setHurtDirection(float arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setInvisible(boolean arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setJumping(boolean arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setKiller(Player arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setShieldBlockingDelay(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -2931,19 +2978,19 @@ public class FakePlayer implements Player {
 	@Override
 	public void sendMessage(UUID arg0, String arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void sendMessage(UUID arg0, String[] arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void sendRawMessage(UUID arg0, String arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -3061,7 +3108,7 @@ public class FakePlayer implements Player {
 	@Override
 	public void giveExp(int arg0, boolean arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -3073,67 +3120,67 @@ public class FakePlayer implements Player {
 	@Override
 	public void hideTitle() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void resetCooldown() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void sendActionBar(String arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void sendActionBar(BaseComponent... arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void sendActionBar(char arg0, String arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void sendTitle(Title arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setAffectsSpawning(boolean arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setPlayerListHeaderFooter(BaseComponent[] arg0, BaseComponent[] arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setPlayerListHeaderFooter(BaseComponent arg0, BaseComponent arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setPlayerProfile(PlayerProfile arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setResourcePack(String arg0, String arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/**
@@ -3210,55 +3257,55 @@ public class FakePlayer implements Player {
 	@Override
 	public void setSubtitle(BaseComponent[] arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setSubtitle(BaseComponent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setTitleTimes(int arg0, int arg1, int arg2) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setViewDistance(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void showTitle(BaseComponent[] arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void showTitle(BaseComponent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void showTitle(BaseComponent[] arg0, BaseComponent[] arg1, int arg2, int arg3, int arg4) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void showTitle(BaseComponent arg0, BaseComponent arg1, int arg2, int arg3, int arg4) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void updateTitle(Title arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
