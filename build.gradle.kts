@@ -31,6 +31,7 @@ val worldGuardVersion: String by project
 dependencies {
 	compileOnly("io.papermc.paper:paper-api:$serverVersion")
 	compileOnly("com.sk89q.worldguard:worldguard-bukkit:$worldGuardVersion")
+	compileOnly("com.mineinabyss:softreload-core:1.1+")
 }
 
 publishing {

@@ -2535,6 +2535,13 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public void sendSignChange(@NotNull Location loc,
+			@Nullable String[] lines, @NotNull DyeColor dyeColor, boolean hasGlowingText)
+			throws IllegalArgumentException {
+
+	}
+
+	@Override
 	public int getClientViewDistance() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -3278,6 +3285,19 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void setBeeStingersInBody(int count) {
+
+	}
+
+	@Override
+	public void sendSignChange(@NotNull Location loc,
+			@Nullable List<Component> lines, boolean hasGlowingText)
+			throws IllegalArgumentException {
+	}
+
+	@Override
+	public void sendSignChange(@NotNull Location loc,
+			@Nullable List<Component> lines,
+			@NotNull DyeColor dyeColor, boolean hasGlowingText) throws IllegalArgumentException {
 
 	}
 }
