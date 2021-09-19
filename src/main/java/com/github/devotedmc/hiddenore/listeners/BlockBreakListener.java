@@ -49,6 +49,8 @@ public class BlockBreakListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
+		UUID uuid = event.getPlayer().getUniqueId();
+		if (PlayerListener.disabledPlayers.contains(uuid)) return;
 		try {
 			doBlockBreak(event);
 		} catch (NullPointerException npe) {
@@ -78,9 +80,8 @@ public class BlockBreakListener implements Listener {
 		BlockConfig bc = Config.isDropBlock(world, bd, event.getBlock().getLocation());
 
 		Player p = event.getPlayer();
-		UUID uuid = p.getUniqueId();
 
-		if (PlayerListener.disabledPlayers.contains(uuid)) return;
+
 
 		// Check if suppression is on (preventing all drops). Fires off a HiddenOreGenerateEvent in case
 		// someone listening might object to our manipulation here.

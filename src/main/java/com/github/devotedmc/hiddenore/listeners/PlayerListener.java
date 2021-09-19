@@ -16,8 +16,7 @@ public class PlayerListener implements Listener {
 	public static HashSet<UUID> disabledPlayers = new HashSet<>();
 
 	@EventHandler
-	public static void onPlayerLeave(PlayerJoinEvent event) {
-		// Does seemingly not work. Player is still kept in the set.
+	public static void onPlayerJoin(PlayerJoinEvent event) {
 		UUID uuid = event.getPlayer().getUniqueId();
 		if (disabledPlayers.contains(uuid)) {
 			disabledPlayers.remove(uuid);
