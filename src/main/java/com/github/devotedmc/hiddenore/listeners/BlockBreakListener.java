@@ -1,19 +1,9 @@
 package com.github.devotedmc.hiddenore.listeners;
 
-import com.github.devotedmc.hiddenore.BlockConfig;
-import com.github.devotedmc.hiddenore.Config;
-import com.github.devotedmc.hiddenore.DropConfig;
-import com.github.devotedmc.hiddenore.HiddenOre;
-import com.github.devotedmc.hiddenore.ToolConfig;
-import com.github.devotedmc.hiddenore.VeinConfig;
+import com.github.devotedmc.hiddenore.*;
 import com.github.devotedmc.hiddenore.events.HiddenOreEvent;
 import com.github.devotedmc.hiddenore.events.HiddenOreGenerateEvent;
 import com.github.devotedmc.hiddenore.util.FakePlayer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -34,6 +24,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.logging.Level;
+
 /**
  * Heart of ore generation, handles breaks.
  * 
@@ -53,6 +49,8 @@ public class BlockBreakListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
+		UUID uuid = event.getPlayer().getUniqueId();
+		if (PlayerListener.disabledPlayers.contains(uuid)) return;
 		try {
 			doBlockBreak(event);
 		} catch (NullPointerException npe) {
@@ -82,7 +80,7 @@ public class BlockBreakListener implements Listener {
 		BlockConfig bc = Config.isDropBlock(world, bd, event.getBlock().getLocation());
 
 		Player p = event.getPlayer();
-		
+
 		// Check if suppression is on (preventing all drops). Fires off a HiddenOreGenerateEvent in case
 		// someone listening might object to our manipulation here.
 		if (bc != null && bc.suppressDrops) {

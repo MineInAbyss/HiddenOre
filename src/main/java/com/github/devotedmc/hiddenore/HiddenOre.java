@@ -3,6 +3,7 @@ package com.github.devotedmc.hiddenore;
 import com.github.devotedmc.hiddenore.commands.CommandHandler;
 import com.github.devotedmc.hiddenore.listeners.BlockBreakListener;
 import com.github.devotedmc.hiddenore.listeners.ExploitListener;
+import com.github.devotedmc.hiddenore.listeners.PlayerListener;
 import com.github.devotedmc.hiddenore.listeners.WorldGenerationListener;
 import com.github.devotedmc.hiddenore.tracking.BreakTracking;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class HiddenOre extends JavaPlugin {
 	private BukkitTask trackingMapSave;
 	
 	private static BlockBreakListener breakHandler;
+	private static PlayerListener playerListener;
 	private static ExploitListener exploitHandler;
 	private static List<WorldGenerationListener> worldGen;
 
@@ -54,6 +56,9 @@ public class HiddenOre extends JavaPlugin {
 
 		breakHandler = new BlockBreakListener(plugin);
 		this.getServer().getPluginManager().registerEvents(breakHandler, this);
+
+		playerListener = new PlayerListener();
+		this.getServer().getPluginManager().registerEvents(playerListener, this);
 				
 		commandHandler = new CommandHandler(this);
 		this.getCommand("hiddenore").setExecutor(commandHandler);
