@@ -81,8 +81,6 @@ public class BlockBreakListener implements Listener {
 
 		Player p = event.getPlayer();
 
-
-
 		// Check if suppression is on (preventing all drops). Fires off a HiddenOreGenerateEvent in case
 		// someone listening might object to our manipulation here.
 		if (bc != null && bc.suppressDrops) {
