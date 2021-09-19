@@ -15,7 +15,7 @@ commands:
        /hiddenore    -- reloads
        /hiddenore save -- forces save of tracking
        /hiddenore generate [num] -- drops all drops near the player issuing the command, use sparingly.
-       /hiddenore toggle -- Toggles oregeneration
+       /hiddenore toggle -- Toggles Ore Generation
       permission: hiddenore.adv
 permissions:
     hiddenore.*:
@@ -26,3 +26,6 @@ permissions:
     hiddenore.adv:
       description: Allows access to  HiddenOre commands.
       default: op
+    hiddenore.toggle:
+      description: Allows players to toggle Ore Generation.
+      default: true

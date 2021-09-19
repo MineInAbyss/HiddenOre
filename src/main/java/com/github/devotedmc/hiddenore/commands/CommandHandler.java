@@ -31,7 +31,7 @@ public class CommandHandler implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		Player p = (Player) sender;
 		if (cmd.getName().equalsIgnoreCase("hiddenore")) {
-			if (sender.hasPermission(plugin.getCommand("hiddenore").getPermission())) {
+			if (sender.hasPermission("hiddenore")) {
 				if (args.length >= 2) {
 					if ("debug".equals(args[0])) {
 						Config.isDebug = Boolean.parseBoolean(args[1]);
@@ -39,7 +39,7 @@ public class CommandHandler implements CommandExecutor {
 						return true;
 					}
 				}
-				
+
 				if (args.length >= 1) {
 					if ("save".equals(args[0])) {
 						plugin.getTracking().liveSave();
@@ -49,15 +49,19 @@ public class CommandHandler implements CommandExecutor {
 						if (!(sender instanceof Player)) {
 							sender.sendMessage("Cannot be run as console");
 						}
-						if (!PlayerListener.disabledPlayers.contains(p.getUniqueId())) {
-							PlayerListener.disabledPlayers.add(p.getUniqueId());
-							sender.sendMessage(ChatColor.RED + "Ore-Generation has been disabled.");
+						if (sender.hasPermission("hiddenore.toggle")) {
+							if (!PlayerListener.disabledPlayers.contains(p.getUniqueId())) {
+								PlayerListener.disabledPlayers.add(p.getUniqueId());
+								sender.sendMessage(ChatColor.RED + "Ore-Generation has been disabled.");
 
-						} else if (PlayerListener.disabledPlayers.contains(p.getUniqueId())){
-							PlayerListener.disabledPlayers.remove(p.getUniqueId());
-							sender.sendMessage(ChatColor.GREEN + "Ore-Generation has been enabled.");
+							} else if (PlayerListener.disabledPlayers.contains(p.getUniqueId())) {
+								PlayerListener.disabledPlayers.remove(p.getUniqueId());
+								sender.sendMessage(ChatColor.GREEN + "Ore-Generation has been enabled.");
+							}
+							return true;
+						} else {
+							return false;
 						}
-						return true;
 					} else if ("generate".equals(args[0])) {
 						if (!(sender instanceof Player)) {
 							sender.sendMessage("Cannot be run as console");
@@ -69,9 +73,9 @@ public class CommandHandler implements CommandExecutor {
 						} catch (Exception e) {mult = 1;}
 						final double vmult = mult;
 						final UUID world = player.getWorld().getUID();
-						
+
 						sender.sendMessage("Generating all drops, this could cause lag");
-						
+
 						Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 							@Override
 							public void run() {
@@ -100,7 +104,7 @@ public class CommandHandler implements CommandExecutor {
 								}
 							}
 						});
-						
+
 						return true;
 					}
 				} else {
@@ -109,7 +113,29 @@ public class CommandHandler implements CommandExecutor {
 					sender.sendMessage("HiddenOre reloaded");
 					return true;
 				}
+			} else {
+				if (args.length >= 1) {
+					if ("toggle".equals(args[0])) {
+						if (!(sender instanceof Player)) {
+							sender.sendMessage("Cannot be run as console");
+						}
+						if (sender.hasPermission("hiddenore.toggle")) {
+							if (!PlayerListener.disabledPlayers.contains(p.getUniqueId())) {
+								PlayerListener.disabledPlayers.add(p.getUniqueId());
+								sender.sendMessage(ChatColor.RED + "Ore-Generation has been disabled.");
+
+							} else if (PlayerListener.disabledPlayers.contains(p.getUniqueId())) {
+								PlayerListener.disabledPlayers.remove(p.getUniqueId());
+								sender.sendMessage(ChatColor.GREEN + "Ore-Generation has been enabled.");
+							}
+							return true;
+						} else {
+							return false;
+						}
+					}
+				}
 			}
+
 		}
 
 		return false;
