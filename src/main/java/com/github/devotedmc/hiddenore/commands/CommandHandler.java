@@ -1,20 +1,19 @@
 package com.github.devotedmc.hiddenore.commands;
 
-import com.github.devotedmc.hiddenore.BlockConfig;
-import com.github.devotedmc.hiddenore.Config;
-import com.github.devotedmc.hiddenore.DropConfig;
-import com.github.devotedmc.hiddenore.DropItemConfig;
-import com.github.devotedmc.hiddenore.HiddenOre;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import com.github.devotedmc.hiddenore.*;
+import com.github.devotedmc.hiddenore.listeners.PlayerListener;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Management and maintenance commands
@@ -30,6 +29,7 @@ public class CommandHandler implements CommandExecutor {
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		Player p = (Player) sender;
 		if (cmd.getName().equalsIgnoreCase("hiddenore")) {
 			if (sender.hasPermission(plugin.getCommand("hiddenore").getPermission())) {
 				if (args.length >= 2) {
@@ -44,6 +44,19 @@ public class CommandHandler implements CommandExecutor {
 					if ("save".equals(args[0])) {
 						plugin.getTracking().liveSave();
 						sender.sendMessage("HiddenOre tracking forced live save scheduled");
+						return true;
+					} else if ("toggle".equals(args[0])) {
+						if (!(sender instanceof Player)) {
+							sender.sendMessage("Cannot be run as console");
+						}
+						if (!PlayerListener.disabledPlayers.contains(p.getUniqueId())) {
+							PlayerListener.disabledPlayers.add(p.getUniqueId());
+							sender.sendMessage(ChatColor.RED + "Ore-Generation has been disabled.");
+
+						} else if (PlayerListener.disabledPlayers.contains(p.getUniqueId())){
+							PlayerListener.disabledPlayers.remove(p.getUniqueId());
+							sender.sendMessage(ChatColor.GREEN + "Ore-Generation has been enabled.");
+						}
 						return true;
 					} else if ("generate".equals(args[0])) {
 						if (!(sender instanceof Player)) {

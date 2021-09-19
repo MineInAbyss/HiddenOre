@@ -58,6 +58,8 @@ import org.bukkit.entity.Pose;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.memory.MemoryKey;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
@@ -3276,6 +3278,26 @@ public class FakePlayer implements Player {
 	public void setViewDistance(int arg0) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public int getNoTickViewDistance() {
+		return 0;
+	}
+
+	@Override
+	public void setNoTickViewDistance(int viewDistance) {
+
+	}
+
+	@Override
+	public int getSendViewDistance() {
+		return 0;
+	}
+
+	@Override
+	public void setSendViewDistance(int viewDistance) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
