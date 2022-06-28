@@ -6,36 +6,9 @@ import com.destroystokyo.paper.block.TargetBlockInfo;
 import com.destroystokyo.paper.block.TargetBlockInfo.FluidMode;
 import com.destroystokyo.paper.entity.TargetEntityInfo;
 import com.destroystokyo.paper.profile.PlayerProfile;
-import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.Chunk;
-import org.bukkit.DyeColor;
-import org.bukkit.Effect;
-import org.bukkit.EntityEffect;
-import org.bukkit.FluidCollisionMode;
-import org.bukkit.GameMode;
-import org.bukkit.Instrument;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Note;
-import org.bukkit.Particle;
-import org.bukkit.Server;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.Statistic;
-import org.bukkit.WeatherType;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.attribute.Attribute;
@@ -47,16 +20,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityCategory;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Pose;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.*;
 import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
@@ -67,16 +31,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.InventoryView.Property;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MainHand;
-import org.bukkit.inventory.Merchant;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.permissions.Permission;
@@ -92,6 +48,9 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.net.InetSocketAddress;
+import java.util.*;
 
 public class FakePlayer implements Player {
 	private final ItemStack inHand;
@@ -876,6 +835,16 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public boolean isFreezeTickingLocked() {
+		return false;
+	}
+
+	@Override
+	public void lockFreezeTicks(boolean locked) {
+
+	}
+
+	@Override
 	public void remove() {
 
 	}
@@ -1418,6 +1387,11 @@ public class FakePlayer implements Player {
 
 	}
 
+	@Override
+	public void kick() {
+
+	}
+
 	/**
 	 * Kicks player with custom kick message.
 	 *
@@ -1554,11 +1528,6 @@ public class FakePlayer implements Player {
 
 	}
 
-	@Override
-	public boolean sendChunkChange(Location loc, int sx, int sy, int sz, byte[] data) {
-
-		return false;
-	}
 
 	/**
 	 * Send a sign change. This fakes a sign change packet for a user at
@@ -1643,6 +1612,11 @@ public class FakePlayer implements Player {
 	@Override
 	public void updateInventory() {
 
+	}
+
+	@Override
+	public @Nullable GameMode getPreviousGameMode() {
+		return null;
 	}
 
 	@Override
@@ -1932,6 +1906,16 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public @Nullable Location getLastDeathLocation() {
+		return null;
+	}
+
+	@Override
+	public void setLastDeathLocation(@Nullable Location location) {
+
+	}
+
+	@Override
 	public Location getBedSpawnLocation() {
 
 		return null;
@@ -1981,6 +1965,21 @@ public class FakePlayer implements Player {
 	@Override
 	public boolean canSee(Player player) {
 
+		return false;
+	}
+
+	@Override
+	public void hideEntity(@NotNull Plugin plugin, @NotNull Entity entity) {
+
+	}
+
+	@Override
+	public void showEntity(@NotNull Plugin plugin, @NotNull Entity entity) {
+
+	}
+
+	@Override
+	public boolean canSee(@NotNull Entity entity) {
 		return false;
 	}
 
@@ -2045,6 +2044,16 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public @Nullable WorldBorder getWorldBorder() {
+		return null;
+	}
+
+	@Override
+	public void setWorldBorder(@Nullable WorldBorder border) {
+
+	}
+
+	@Override
 	public boolean isHealthScaled() {
 
 		return false;
@@ -2064,6 +2073,16 @@ public class FakePlayer implements Player {
 	public double getHealthScale() {
 
 		return 0;
+	}
+
+	@Override
+	public void sendHealthUpdate(double health, int foodLevel, float saturationLevel) {
+
+	}
+
+	@Override
+	public void sendHealthUpdate() {
+
 	}
 
 	@Override
@@ -2139,24 +2158,34 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX,
-			double offsetY, double offsetZ, double extra) {
+							  double offsetY, double offsetZ, double extra) {
 
 	}
 
 	@Override
 	public <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY,
-			double offsetZ, double extra, T data) {
+								  double offsetZ, double extra, T data) {
 
 	}
 
 	@Override
 	public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX,
-			double offsetY, double offsetZ, double extra, T data) {
+								  double offsetY, double offsetZ, double extra, T data) {
 
 	}
 
 	@Override
 	public Spigot spigot() {
+		return null;
+	}
+
+	@Override
+	public @NotNull Component name() {
+		return null;
+	}
+
+	@Override
+	public @NotNull Component teamDisplayName() {
 		return null;
 	}
 
@@ -2341,6 +2370,16 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public void playSound(@NotNull Entity entity, @NotNull Sound sound, float volume, float pitch) {
+
+	}
+
+	@Override
+	public void playSound(@NotNull Entity entity, @NotNull Sound sound, @NotNull SoundCategory category, float volume, float pitch) {
+
+	}
+
+	@Override
 	public void sendTitle(String arg0, String arg1, int arg2, int arg3, int arg4) {
 
 	}
@@ -2351,12 +2390,37 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public void setResourcePack(@NotNull String url, @Nullable byte[] hash, @Nullable String prompt) {
+
+	}
+
+	@Override
+	public void setResourcePack(@NotNull String url, @Nullable byte[] hash, boolean force) {
+
+	}
+
+	@Override
+	public void setResourcePack(@NotNull String url, @Nullable byte[] hash, @Nullable String prompt, boolean force) {
+
+	}
+
+	@Override
+	public void setResourcePack(@NotNull String url, byte @Nullable [] hash, @Nullable Component prompt, boolean force) {
+
+	}
+
+	@Override
 	public void stopSound(Sound arg0, SoundCategory arg1) {
 
 	}
 
 	@Override
 	public void stopSound(String arg0, SoundCategory arg1) {
+
+	}
+
+	@Override
+	public void stopAllSounds() {
 
 	}
 
@@ -2390,6 +2454,16 @@ public class FakePlayer implements Player {
 	 */
 	@Override
 	public void sendBlockDamage(@NotNull Location loc, float progress) {
+
+	}
+
+	@Override
+	public void sendMultiBlockChange(@NotNull Map<Location, BlockData> blockChanges, boolean suppressLightUpdates) {
+
+	}
+
+	@Override
+	public void sendEquipmentChange(@NotNull LivingEntity entity, @NotNull EquipmentSlot slot, @NotNull ItemStack item) {
 
 	}
 
@@ -2544,6 +2618,11 @@ public class FakePlayer implements Player {
 	@Override
 	public Pose getPose() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull SpawnCategory getSpawnCategory() {
 		return null;
 	}
 
@@ -2723,6 +2802,16 @@ public class FakePlayer implements Player {
 	public void openSign(Sign arg0) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void showDemoScreen() {
+
+	}
+
+	@Override
+	public boolean isAllowingServerListings() {
+		return false;
 	}
 
 	@Override
@@ -3054,6 +3143,16 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public boolean spawnAt(@NotNull Location location, @NotNull SpawnReason reason) {
+		return false;
+	}
+
+	@Override
+	public boolean isInPowderedSnow() {
+		return false;
+	}
+
+	@Override
 	public boolean getAffectsSpawning() {
 		// TODO Auto-generated method stub
 		return false;
@@ -3277,6 +3376,16 @@ public class FakePlayer implements Player {
 	@Override
 	public void setViewDistance(int arg0) {
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public int getSimulationDistance() {
+		return 0;
+	}
+
+	@Override
+	public void setSimulationDistance(int simulationDistance) {
 
 	}
 

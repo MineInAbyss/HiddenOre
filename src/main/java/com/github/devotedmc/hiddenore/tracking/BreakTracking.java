@@ -2,33 +2,21 @@ package com.github.devotedmc.hiddenore.tracking;
 
 import com.github.devotedmc.hiddenore.Config;
 import com.github.devotedmc.hiddenore.HiddenOre;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 
 /**
  * A critical component of HiddenOre is preventing gaming of the ore generation system.
- * This is done by circumspect tracking and suppressing of "repeat placements", 
+ * This is done by circumspect tracking and suppressing of "repeat placements",
  * generators, piston use, etc. It's quite effective; all known avenues of attack
  * result in significantly reduced drop/genrates. It does <i>not</i> pay to cheat.
- * 
+ *
  * @author soerxpso, programmerdan
  */
 public class BreakTracking {
@@ -36,13 +24,13 @@ public class BreakTracking {
 	private static final int MAP = 0;
 	Map<UUID, Map<Long, short[]>> track;
 	Map<UUID, Map<Long, long[][][]>> map;
-	
+
 	// Now for one small data structures that will let us keep track of most-recent-breaks to directly
 	// prevent gaming.
-	
+
 	private static final int RECENT_MAX = 512;
 	private int recentPtr;
-	private Location[] recent;
+	private final Location[] recent;
 
 	public BreakTracking() {
 		track = new HashMap<>();
@@ -61,24 +49,28 @@ public class BreakTracking {
 			try {
 				DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(tf)));
 
-				String uuid = null;
+				String uuid;
 				boolean active = true;
 				while (active) {
 					try {
 						uuid = dis.readUTF();
-						 HiddenOre.getPlugin().getLogger().info("Loading tracking data for world " + uuid);
+						if (uuid.equals("")) {
+							continue;
+						}
+						HiddenOre.getPlugin().getLogger().info("Loading tracking data for world " + uuid);
 					} catch (EOFException done) {
-						active = false;
 						break;
 					}
+
 					UUID uid = UUID.fromString(uuid);
 					Map<Long, short[]> world = new HashMap<>();
 					track.put(uid, world);
 
 					World bukkitWorld = Bukkit.getWorld(uid);
-					int worldHeight = bukkitWorld.getMaxHeight() + Math.abs(bukkitWorld.getMinHeight());
-
-					long ccnt = 0l;
+					int worldHeight = 0;
+					if (bukkitWorld != null) {
+						worldHeight = bukkitWorld.getMaxHeight() + Math.abs(bukkitWorld.getMinHeight());
+					}
 
 					while (dis.readBoolean()) {
 						Long chunk = dis.readLong();
@@ -86,14 +78,9 @@ public class BreakTracking {
 						for (int i = 0; i < layers.length; i++) {
 							layers[i] = dis.readShort();
 						}
-						if (Config.isDebug) {
-							// HiddenOre.getPlugin().getLogger().info("Loaded layers for chunk " + chunk);
-						}
-						ccnt++;
 						world.put(chunk, layers);
 					}
 
-					// HiddenOre.getPlugin().getLogger().info("Loaded " + ccnt + " chunks");
 				}
 
 				dis.close();
@@ -102,39 +89,35 @@ public class BreakTracking {
 			}
 		}
 		s = System.currentTimeMillis() - s;
-		// HiddenOre.getPlugin().getLogger().info("Took " + s + "ms to load Break Tracking");
-		
-		if (!Config.isMapActive()) {
-			// HiddenOre.getPlugin().getLogger().info("Skipped Break Map init, disabled in config.");
-			return;
-		}
-		
+
+		if (!Config.isMapActive()) return;
+
 		s = System.currentTimeMillis();
-		// HiddenOre.getPlugin().getLogger().info("Starting Break Map load");
 		tf = Config.getMapFile();
 		if (!tf.exists()) {
-			// HiddenOre.getPlugin().getLogger().info("No map save exists to load");
 		} else {
-			try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(tf)))){
+			try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(tf)))) {
 
-				String uuid = null;
+				String uuid;
 				boolean active = true;
 				while (active) {
 					try {
 						uuid = dis.readUTF();
-						// HiddenOre.getPlugin().getLogger().info("Loading mapping data for world " + uuid);
+						if (uuid.equals("")) {
+							continue;
+						}
 					} catch (EOFException done) {
-						active = false;
 						break;
 					}
 					UUID uid = UUID.fromString(uuid);
-					Map<Long, long[][][]> world = new HashMap<Long, long[][][]>();
+					Map<Long, long[][][]> world = new HashMap<>();
 					map.put(uid, world);
 
-					long ccnt = 0l;
-
 					World bukkitWorld = Bukkit.getWorld(uid);
-					int worldHeight = bukkitWorld.getMaxHeight() + Math.abs(bukkitWorld.getMinHeight());
+					int worldHeight = 0;
+					if (bukkitWorld != null) {
+						worldHeight = bukkitWorld.getMaxHeight() + Math.abs(bukkitWorld.getMinHeight());
+					}
 
 					while (dis.readBoolean()) {
 						Long chunk = dis.readLong();
@@ -149,24 +132,16 @@ public class BreakTracking {
 								layers[GEN][i][j] = dis.readLong(); // "gen"
 							}
 						}
-
-						if (Config.isDebug) {
-							// HiddenOre.getPlugin().getLogger().info("Loaded layers for chunk " + chunk);
-						}
-						ccnt++;
 						world.put(chunk, layers);
 					}
 
-					// HiddenOre.getPlugin().getLogger().info("Loaded " + ccnt + " chunks");
 				}
 
-				dis.close();
 			} catch (IOException ioe) {
 				HiddenOre.getPlugin().getLogger().log(Level.SEVERE, "Failed to load break map.", ioe);
 			}
 		}
 		s = System.currentTimeMillis() - s;
-		// HiddenOre.getPlugin().getLogger().info("Took " + s + "ms to load Break Map");
 	}
 
 	public void liveSave() {
@@ -243,7 +218,7 @@ public class BreakTracking {
 		if (!Config.isMapActive()) {
 			// HiddenOre.getPlugin().getLogger().info("Skipped Break Map save, disabled in config.");
 		}
-		
+
 		long s = System.currentTimeMillis();
 		// HiddenOre.getPlugin().getLogger().info("Starting Break Map save");
 		File tf = Config.getMapFile();
@@ -307,13 +282,13 @@ public class BreakTracking {
 
 	/**
 	 * This has a specific purpose of tracking a generation of an ore. For breaks or manipulations, use trackBreak.
-	 * 
+	 *
 	 * @param loc the location to track gen
 	 * @return true if new gen, false otherwise
 	 */
 	public boolean trackGen(Location loc) {
 		if (!Config.isMapActive()) return true;
-		
+
 		long s = System.currentTimeMillis();
 		int Y = Math.abs(loc.getWorld().getMinHeight()) + loc.getBlockY();
 		int X = (loc.getBlockX() % 16 + 16) % 16;
@@ -329,13 +304,13 @@ public class BreakTracking {
 			mapChunks = new HashMap<Long, long[][][]>();
 			map.put(world, mapChunks);
 		}
-		
+
 		long[][][] mapLayers = mapChunks.get(chunk_id);
 		if (mapLayers == null) { // init layers
 			int height = Math.abs(loc.getWorld().getMinHeight()) + loc.getWorld().getMaxHeight();
 			mapLayers = new long[2][height][4];
 			mapChunks.put(chunk_id, mapLayers);
-			
+
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < 16; x++) {
 					for (int z = 0; z < 16; z++) {
@@ -360,20 +335,20 @@ public class BreakTracking {
 			mapLayers[MAP][Y][quad_id] |= mask_id;
 			mapLayers[GEN][Y][quad_id] |= mask_id;
 		}
-		
+
 		s = System.currentTimeMillis() - s;
 		if (s > 10l) {
 			// HiddenOre.getPlugin().getLogger().info("Took a long time (" + s + "ms) recording generation at " + loc);
 		}
-		
+
 		return ret;
 	}
-	
+
 	/**
 	 * This has a specific purpose of testing a generation of an ore.
-	 * 
+	 *
 	 * As of 1.5.3, checks the recent list for a match, just in case.
-	 * 
+	 *
 	 * @param loc the location to check
 	 * @return true if ok to gen, otherwise false
 	 */
@@ -386,9 +361,9 @@ public class BreakTracking {
 				return false;
 			}
 		}
-		
+
 		if (!Config.isMapActive()) return true;
-		
+
 		int Y = Math.abs(loc.getWorld().getMinHeight()) + loc.getBlockY();
 		int X = (loc.getBlockX() % 16 + 16) % 16;
 		int Z = (loc.getBlockZ() % 16 + 16) % 16;
@@ -403,7 +378,7 @@ public class BreakTracking {
 		if (mapChunks == null) { // no tracking, so OK 
 			return true;
 		}
-		
+
 		long[][][] mapLayers = mapChunks.get(chunk_id);
 		if (mapLayers == null) { // no layer, so OK
 			return true;
@@ -415,25 +390,25 @@ public class BreakTracking {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * This is only for map breaks -- "expands" impact of break node, to prevent
 	 * any additional breaks of exposed blocks from generating.
-	 * 
+	 *
 	 * Somewhat gracefully handles promoting breaks into adjacent chunks if needed.
 	 * TODO eval above
-	 * 
+	 *
 	 * ATM this works by suppressing _generation_ in blocks around the one that was broken.
 	 * It does NOT suppress the ability of one of those blocks to generate more nodes.
-	 * 
+	 *
 	 * Basically, once a block is exposed it doesn't transform.
-	 * 
+	 *
 	 * @param loc the location to check after a break
 	 * @param exp expand to nearby layers/chunks?
 	 */
 	public void postTrackBreak(Location loc, boolean exp) {
 		if (!Config.isMapActive()) return;
-		
+
 		long s = System.currentTimeMillis();
 		int Y = Math.abs(loc.getWorld().getMinHeight()) + loc.getBlockY();
 		int X = (loc.getBlockX() % 16 + 16) % 16;
@@ -449,7 +424,7 @@ public class BreakTracking {
 		if (genChunks == null) {
 			return; // should be init'd or this is being improperly called.
 		}
-		
+
 		long[][][] mapLayers = genChunks.get(chunk_id);
 		if (mapLayers == null) {
 			return; // should be init'd or this is being improperly called.
@@ -461,7 +436,7 @@ public class BreakTracking {
 		if (exp) {
 			if (Y > 0) mapLayers[GEN][Y-1][quad_id] |= mask_id;
 			if (Y <= worldHeight) mapLayers[GEN][Y+1][quad_id] |= mask_id;
-			
+
 			if (X > 0) {
 				int nblock_id = (((X-1) << 4) + Z);
 				int nquad_id = (nblock_id / 64);
@@ -495,13 +470,13 @@ public class BreakTracking {
 		if (s > 10l) {
 			// HiddenOre.getPlugin().getLogger().info("Took a long time (" + s + "ms) recording genmap post break at " + loc);
 		}
-	
+
 	}
-	
+
 	/**
 	 * Tracks a first order break or manip.
 	 * Locks that location from generating new drop opportunities or from transforming.
-	 * 
+	 *
 	 * @param loc the location to check
 	 * @return true if OK to break, false otherwise
 	 */
@@ -512,7 +487,7 @@ public class BreakTracking {
 		long initMapLayers = 0l;
 		long scanLayer = 0l;
 		long recentCheck = 0l;
-		
+
 		long s = System.currentTimeMillis();
 		int Y = Math.abs(loc.getWorld().getMinHeight()) + loc.getBlockY();
 		int X = (loc.getBlockX() % 16 + 16) % 16;
@@ -525,7 +500,7 @@ public class BreakTracking {
 		long mask_id = (1l << (block_id % 64));
 
 		int worldHeight = loc.getWorld().getMaxHeight() + Math.abs(loc.getWorld().getMinHeight());
-		
+
 		Map<Long, short[]> chunks = track.get(world);
 		if (chunks == null) { // init chunk
 			initChunk = System.nanoTime();
@@ -533,7 +508,7 @@ public class BreakTracking {
 			track.put(world, chunks);
 			initChunk = System.nanoTime() - initChunk;
 		}
-		
+
 		short[] layers = chunks.get(chunk_id);
 		if (layers == null) { // init layers
 			initLayers = System.nanoTime();
@@ -544,7 +519,7 @@ public class BreakTracking {
 
 		boolean ret = true;
 		long spc = 0l;
-		
+
 		if (Config.isMapActive()) {
 			Map<Long, long[][][]> mapChunks = map.get(world);
 			if (mapChunks == null) { // init map chunk
@@ -553,14 +528,14 @@ public class BreakTracking {
 				map.put(world, mapChunks);
 				initMapChunk = System.nanoTime() - initMapChunk;
 			}
-	
+
 			long[][][] mapLayers = mapChunks.get(chunk_id);
 			if (mapLayers == null) { // init layers
 				initMapLayers = System.nanoTime();
 				mapLayers = new long[2][worldHeight][4];
 				mapChunks.put(chunk_id, mapLayers);
 				ChunkSnapshot chunkS = chunk.getChunkSnapshot();
-				
+
 				for (int y = 0; y < worldHeight; y++) {
 					for (int x = 0; x < 16; x++) {
 						for (int z = 0; z < 16; z++) {
@@ -579,7 +554,7 @@ public class BreakTracking {
 				}
 				initMapLayers = System.nanoTime() - initMapLayers;
 			}
-	
+
 			if ((mapLayers[MAP][Y][quad_id] & mask_id) == mask_id) {
 				ret = false; // already broken!
 			} else {
@@ -587,10 +562,10 @@ public class BreakTracking {
 				mapLayers[MAP][Y][quad_id] |= mask_id;
 				mapLayers[GEN][Y][quad_id] |= mask_id;
 			}
-			
+
 			spc =  mapLayers[MAP][Y][quad_id];
 		}
-		
+
 		if (layers[Y] == 0) {
 			scanLayer = System.nanoTime();
 			// quick layer scan for air and water
@@ -611,7 +586,7 @@ public class BreakTracking {
 			layers[Y]++; // represent new break in layer.
 			ret = true;
 		}
-		if (ret) { 
+		if (ret) {
 			recentCheck = System.nanoTime();
 			boolean shallow = false;
 			int j = recentPtr;
@@ -624,7 +599,7 @@ public class BreakTracking {
 					break;
 				}
 			}
-			
+
 			if (!shallow) { // we add to the "end" of a circular list. 
 				if (--recentPtr < 0) {
 					recentPtr += RECENT_MAX;
@@ -633,7 +608,7 @@ public class BreakTracking {
 			}
 			recentCheck = System.nanoTime() - recentCheck;
 		}
-		
+
 		if (Config.isDebug) {
 			HiddenOre.getPlugin().getLogger()
 					.info("now world " + world + " chunk " + chunk_id + " layersum " + layers[Y] + " map" + quad_id + ":" + mask_id + "t " + spc);

@@ -11,5 +11,5 @@ repositories {
 val worldGuardVersion: String by project
 
 dependencies {
-	compileOnly("com.sk89q.worldguard:worldguard-bukkit:$worldGuardVersion")
+	compileOnly(hiddenlibs.minecraft.plugin.worldguard)
 }
