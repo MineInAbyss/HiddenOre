@@ -351,6 +351,7 @@ public final class Config {
 				ConfigurationSection block = blocks.getConfigurationSection(sourceBlock);
 
 				String cBlockName = block.getString("material");
+				PrefabKey cBlockBlocky = PrefabKey.Companion.ofOrNull(block.getString("blocky", ""));
 				List<NamespacedKey> cBlockKeys = new ArrayList<NamespacedKey>();
 				if (cBlockName == null) {
 					ConfigurationSection cBlockNames = block.getConfigurationSection("materials");
@@ -364,28 +365,40 @@ public final class Config {
 									cBlockN);
 							String cBlockName2 = cBlockS.getString("material");
 							Material cBlockMat = Material.getMaterial(cBlockName2);
-							if (cBlockMat == null) {
+
+							if (cBlockMat == null && cBlockBlocky == null) {
 								HiddenOre.getPlugin().getLogger()
-										.warning("Failed to find material for " + cBlockName2);
+										.warning("Failed to find material for " + cBlockName2 + " and Blocky-block for " + cBlockS.getString("blocky", ""));
 								continue;
 							} else {
-								cBlockKeys.add(cBlockMat.getKey());
+								if (cBlockMat != null) {
+									cBlockKeys.add(cBlockMat.getKey());
+								}
+								if (cBlockBlocky != null) {
+									cBlockKeys.add(NamespacedKey.fromString(cBlockBlocky.getFull()));
+								}
 							}
 						}
 					}
 				} else {
 					try {
 						Material cBlockMat = Material.getMaterial(cBlockName);
-						if (cBlockMat == null) {
+
+						if (cBlockMat == null && cBlockBlocky == null) {
 							HiddenOre.getPlugin().getLogger()
-									.warning("Failed to find material for " + cBlockName);
+									.warning("Failed to find material for " + cBlockName + " and Blocky-block for " + block.getString("blocky", ""));
 							continue;
 						} else {
-							cBlockKeys.add(cBlockMat.getKey());
+							if (cBlockMat != null) {
+								cBlockKeys.add(cBlockMat.getKey());
+							}
+							if (cBlockBlocky != null) {
+								cBlockKeys.add(NamespacedKey.fromString(cBlockBlocky.getFull()));
+							}
 						}
 					} catch (Exception e) {
 						HiddenOre.getPlugin().getLogger()
-								.warning("Failed to find material for " + cBlockName);
+								.warning("Failed to find material for " + cBlockName + " and Blocky-block for " + block.getString("blocky", ""));
 						continue;
 					}
 				}

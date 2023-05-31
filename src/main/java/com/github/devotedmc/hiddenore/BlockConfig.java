@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import com.mineinabyss.blocky.BlockyPluginKt;
+import com.mineinabyss.geary.papermc.datastore.namespacedkey.NamespacedKeyHelpersKt;
+import com.mineinabyss.geary.prefabs.PrefabKey;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -34,7 +37,12 @@ public class BlockConfig {
 	}
 	
 	public boolean checkBlock(Block check) {
-		return material.equals(check.getType().getKey());
+		if (material.equals(check.getType().getKey())) return true;
+		PrefabKey blockyPrefab = BlockyPluginKt.getPrefabMap().get(check.getBlockData());
+		if (blockyPrefab != null) {
+			return material.equals(NamespacedKeyHelpersKt.toComponentKey(blockyPrefab.getFull()));
+		}
+		return false;
 	}
 	
 	/**
@@ -50,6 +58,7 @@ public class BlockConfig {
 		if (validGenTypes == null) return false;
 		for (NamespacedKey wrapper : validGenTypes) {
 			if (wrapper.equals(check.getType().getKey())) return true;
+			if (wrapper.equals(NamespacedKeyHelpersKt.toComponentKey(BlockyPluginKt.getPrefabMap().get(check.getBlockData()).getFull()))) return true;
 		}
 		
 		return false;
