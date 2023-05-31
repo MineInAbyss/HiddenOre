@@ -108,7 +108,7 @@ public class CommandHandler implements CommandExecutor {
 						return true;
 					}
 				} else {
-					Bukkit.getPluginManager().disablePlugin(plugin, false);
+					Bukkit.getPluginManager().disablePlugin(plugin);
 					Bukkit.getPluginManager().enablePlugin(plugin);
 					sender.sendMessage("HiddenOre reloaded");
 					return true;

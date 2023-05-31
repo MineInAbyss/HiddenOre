@@ -1,6 +1,10 @@
 package com.github.devotedmc.hiddenore;
 
 import com.github.devotedmc.hiddenore.listeners.ConfigDeferralListener;
+import com.mineinabyss.blocky.api.BlockyBlocks;
+import com.mineinabyss.geary.papermc.tracking.items.GearyItemProvider;
+import com.mineinabyss.geary.papermc.tracking.items.ItemTrackingKt;
+import com.mineinabyss.geary.prefabs.PrefabKey;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -466,6 +470,12 @@ public final class Config {
 		@SuppressWarnings("unchecked")
 		List<ItemStack> items = (List<ItemStack>) drop.getList("package",
 				new ArrayList<ItemStack>());
+		if (drops.isString("prefab")) {
+			PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(drops.getString("prefab", ""));
+			if (prefabKey != null) {
+				items.add(ItemTrackingKt.getItemTracking().getProvider().serializePrefabToItemStack(prefabKey, null));
+			}
+		}
 		boolean transformIfAble = drop.getBoolean("transformIfAble", false);
 		boolean transformDropIfFails = drop.getBoolean("transformDropIfFails", false);
 		int transformMaxDropsIfFails = drop.getInt("transformMaxDropsIfFails", 1);
