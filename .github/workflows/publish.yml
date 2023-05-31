@@ -16,7 +16,7 @@ jobs:
 
       - uses: MineInAbyss/publish-action@master
         with:
-          maven-metadata-url: https://repo.mineinabyss.com/releases/com/github/devotedmc/hiddenore/maven-metadata.xml
+          maven-metadata-url: https://repo.mineinabyss.com/releases/com/devotedmc/hiddenore/maven-metadata.xml
           pages-path: build/dokka/htmlMultiModule/
           dokka: dokkaHtmlMultiModule
           maven-username: ${{ secrets.MAVEN_PUBLISH_USERNAME }}
