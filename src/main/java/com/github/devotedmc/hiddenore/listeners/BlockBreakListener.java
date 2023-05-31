@@ -4,6 +4,14 @@ import com.github.devotedmc.hiddenore.*;
 import com.github.devotedmc.hiddenore.events.HiddenOreEvent;
 import com.github.devotedmc.hiddenore.events.HiddenOreGenerateEvent;
 import com.github.devotedmc.hiddenore.util.FakePlayer;
+import com.mineinabyss.blocky.BlockyPluginKt;
+import com.mineinabyss.blocky.api.BlockyBlocks;
+import com.mineinabyss.blocky.components.core.BlockyBlock;
+import com.mineinabyss.blocky.helpers.GenericHelpersKt;
+import com.mineinabyss.geary.papermc.datastore.DataStoreKt;
+import com.mineinabyss.geary.prefabs.PrefabKey;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -24,10 +32,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 /**
@@ -119,6 +125,7 @@ public class BlockBreakListener implements Listener {
 
 		boolean hasDrop = false;
 
+		Bukkit.broadcast(Component.text(Config.instance.defaultPrefix).color(NamedTextColor.BLUE));
 		StringBuilder alertUser = new StringBuilder().append(Config.instance.defaultPrefix);
 
 		String biomeName = b.getBiome().name();
@@ -240,7 +247,7 @@ public class BlockBreakListener implements Listener {
 			Bukkit.getPluginManager().callEvent(hoge);
 			if (!hoge.isCancelled()) {
 				sourceBlock.setType(Material.AIR);
-				event.setCancelled(true);				
+				event.setCancelled(true);
 			} else {
 				log("For {0} at {1}, HiddenOre for {2} cancelled.", player.getDisplayName(), player.getLocation(), sourceBlock);
 				debug("Generate cancelled, cancelling HiddenOre drop.");
@@ -256,6 +263,7 @@ public class BlockBreakListener implements Listener {
 
 		if (dropConfig.transformIfAble) {
 			final List<ItemStack> transform = dropConfig.renderTransform(biomeName, dropTool);
+			debug(transform.isEmpty() ? "no transform" : "do transform");
 			if (!transform.isEmpty()) {
 				doActualGenerate(transform, sourceLocation, player, dropName, blockName, blockConfig, 
 						alertBuffer, dropConfig);
@@ -282,13 +290,13 @@ public class BlockBreakListener implements Listener {
 						sourceLocation.getWorld().dropItem(sourceLocation.add(0.5, 0.5, 0.5), item).setVelocity(new Vector(0, 0.05, 0));
 					}
 				}
-			}.runTaskLater(plugin, 1l);
+			}.runTaskLater(plugin, 1L);
 
 			// Correct stats output.
 			for (ItemStack item: hoe.getDrops()) {
 				String name = item.getI18NDisplayName();
-				log("STAT: Player {0} at {1} broke {2} - dropping {3} {4}", 
-						player.getDisplayName(), player.getLocation(), blockName, 
+				log("STAT: Player {0} at {1} broke {2} - dropping {3} {4}",
+						player.getDisplayName(), player.getLocation(), blockName,
 						item.getAmount(), name);
 			}
 			
@@ -327,8 +335,16 @@ public class BlockBreakListener implements Listener {
 		VeinConfig vc = dropConfig.getVeinNature();
 		Block origin = sourceLocation.getBlock();
 		for (ItemStack xform : items) {
-			Material sample = xform.getType();
-			Material expressed = sample;
+			BlockData sampleData = xform.getType().createBlockData();
+			Bukkit.broadcast(Component.text(sampleData.toString()));
+			if (BlockyBlocks.INSTANCE.isBlockyBlock(xform)) {
+				PrefabKey prefabKey = DataStoreKt.decodePrefabs(xform.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
+				Optional<Map.Entry<BlockData, PrefabKey>> blockyData = BlockyPluginKt.getPrefabMap().entrySet().stream().filter(e -> e.getValue().equals(prefabKey)).findFirst();
+				if (blockyData.isPresent()) {
+					sampleData = blockyData.get().getKey();
+				}
+			}
+			BlockData expressed = sampleData;
 			forceFacing = (vc == null ? -1 : (vc.getForceVisibleTransform() ? 0 : -1 )); // do index traverse on visible faces
 			// to ensure overall fairness but density in discovery, we add walk attempts to cover forced facing reveal
 			// to make sure we test them all before moving on.
@@ -356,10 +372,12 @@ public class BlockBreakListener implements Listener {
 							(int) Math.round(u * z));
 				}
 				if (plugin.getTracking().testGen(walk.getLocation()) && blockConfig.checkGenerateBlock(walk)) {
-					HiddenOreGenerateEvent hoge = new HiddenOreGenerateEvent(player, walk, sample);
+					Bukkit.broadcast(Component.text("HiddenOreGenerateEvent"));
+					HiddenOreGenerateEvent hoge = new HiddenOreGenerateEvent(player, walk, sampleData);
+					Bukkit.broadcast(Component.text(hoge.getTransform().toString()));
 					Bukkit.getPluginManager().callEvent(hoge);
 					if (!hoge.isCancelled()) {
-						walk.setType(hoge.getTransform());
+						walk.setBlockData(hoge.getTransform(), false);
 						expressed = hoge.getTransform();
 						cPlace --;
 						tryFacing = true;

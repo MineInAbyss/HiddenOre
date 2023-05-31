@@ -2,6 +2,7 @@ package com.github.devotedmc.hiddenore.events;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -12,9 +13,13 @@ public class HiddenOreGenerateEvent extends Event implements Cancellable {
 
 	private final Player player;
 	private final Block transformBlock;
-	private Material transform;
+	private BlockData transform;
 
 	public HiddenOreGenerateEvent(final Player player, final Block transformBlock, Material transform) {
+		this(player, transformBlock, transform.createBlockData());
+	}
+
+	public HiddenOreGenerateEvent(final Player player, final Block transformBlock, BlockData transform) {
 		super(false);
 		this.player = player;
 		this.transformBlock = transformBlock;
@@ -50,11 +55,11 @@ public class HiddenOreGenerateEvent extends Event implements Cancellable {
 		return transformBlock;
 	}
 
-	public Material getTransform() {
+	public BlockData getTransform() {
 		return transform;
 	}
 
-	public void setTransform(Material transform) {
+	public void setTransform(BlockData transform) {
 		if (transform == this.transform) return;
 		this.transform = transform;
 	}

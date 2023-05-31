@@ -361,12 +361,13 @@ public final class Config {
 						continue;
 					} else {
 						for (String cBlockN : cBlockNames.getKeys(false)) {
-							ConfigurationSection cBlockS = cBlockNames.getConfigurationSection(
-									cBlockN);
-							String cBlockName2 = cBlockS.getString("material");
+							ConfigurationSection cBlockS = cBlockNames.getConfigurationSection(cBlockN);
+							String cBlockName2 = cBlockS.getString("material", "");
+							String cBlockBlocky2 = cBlockS.getString("blocky", "");
 							Material cBlockMat = Material.getMaterial(cBlockName2);
+							PrefabKey cBlockPrefab = PrefabKey.Companion.ofOrNull(cBlockBlocky2);
 
-							if (cBlockMat == null && cBlockBlocky == null) {
+							if (cBlockMat == null && cBlockPrefab == null) {
 								HiddenOre.getPlugin().getLogger()
 										.warning("Failed to find material for " + cBlockName2 + " and Blocky-block for " + cBlockS.getString("blocky", ""));
 								continue;
@@ -374,8 +375,8 @@ public final class Config {
 								if (cBlockMat != null) {
 									cBlockKeys.add(cBlockMat.getKey());
 								}
-								if (cBlockBlocky != null) {
-									cBlockKeys.add(NamespacedKey.fromString(cBlockBlocky.getFull()));
+								if (cBlockPrefab != null) {
+									cBlockKeys.add(NamespacedKey.fromString(cBlockPrefab.getFull()));
 								}
 							}
 						}

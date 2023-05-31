@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -180,7 +181,9 @@ public class DropConfig {
 					new Object[] {dropName, min, max, amount});
 		
 		List<ItemStack> toTransform = new ArrayList<ItemStack>(drops.size());
+		Bukkit.getLogger().severe(String.valueOf(drops.size()));
 		for (DropItemConfig item : drops) {
+			Bukkit.getLogger().severe("Transform: " + item.canTransform());
 			if (this.transformIfAble && item.canTransform())
 				toTransform.add(item.render(amount));
 		}

@@ -3,6 +3,7 @@ package com.github.devotedmc.hiddenore;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mineinabyss.blocky.api.BlockyBlocks;
 import org.bukkit.inventory.ItemStack;
 
 public class DropItemConfig {
@@ -11,7 +12,7 @@ public class DropItemConfig {
 	
 	public DropItemConfig(ItemStack template) {
 		this.template = template;
-		this.canTransform = template.getType().isBlock();
+		this.canTransform = template.getType().isBlock() || BlockyBlocks.INSTANCE.isBlockyBlock(template);
 	}
 	
 	public boolean canTransform() {

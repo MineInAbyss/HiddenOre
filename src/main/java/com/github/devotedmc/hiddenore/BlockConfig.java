@@ -9,6 +9,8 @@ import java.util.logging.Level;
 import com.mineinabyss.blocky.BlockyPluginKt;
 import com.mineinabyss.geary.papermc.datastore.namespacedkey.NamespacedKeyHelpersKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -58,7 +60,8 @@ public class BlockConfig {
 		if (validGenTypes == null) return false;
 		for (NamespacedKey wrapper : validGenTypes) {
 			if (wrapper.equals(check.getType().getKey())) return true;
-			if (wrapper.equals(NamespacedKeyHelpersKt.toComponentKey(BlockyPluginKt.getPrefabMap().get(check.getBlockData()).getFull()))) return true;
+			PrefabKey blockyPrefab = BlockyPluginKt.getPrefabMap().get(check.getBlockData());
+			if (blockyPrefab != null && wrapper.toString().equals(blockyPrefab.getFull())) return true;
 		}
 		
 		return false;
@@ -73,7 +76,7 @@ public class BlockConfig {
 	public boolean hasCustomPrefix(String drop) {
 		if (drop == null) return false;
 		DropConfig dc = dropConfigs.get(drop);
-		return (dc == null || dc.prefix == null) ? (prefix != null) : true;
+		return dc != null && dc.prefix != null || (prefix != null);
 	}
 
 	public void addDropConfig(String drop, DropConfig dropConfig) {
