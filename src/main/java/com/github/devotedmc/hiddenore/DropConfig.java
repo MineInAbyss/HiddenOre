@@ -7,6 +7,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import com.mineinabyss.blocky.api.BlockyBlocks;
+import com.mineinabyss.blocky.helpers.GenericHelpersKt;
+import com.mineinabyss.geary.papermc.datastore.DataStoreKt;
+import com.mineinabyss.geary.papermc.tracking.entities.ConversionKt;
+import com.mineinabyss.geary.papermc.tracking.items.ItemTrackingKt;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -156,6 +161,7 @@ public class DropConfig {
 					new Object[] {dropName, min, max, amount});
 		
 		List<ItemStack> toDrop = new ArrayList<ItemStack>(drops.size());
+		Bukkit.getLogger().severe("Drops: " + drops.size());
 		for (DropItemConfig item : drops) {
 			if (!this.transformIfAble || !item.canTransform())
 				toDrop.add(item.render(amount));
@@ -181,9 +187,10 @@ public class DropConfig {
 					new Object[] {dropName, min, max, amount});
 		
 		List<ItemStack> toTransform = new ArrayList<ItemStack>(drops.size());
-		Bukkit.getLogger().severe(String.valueOf(drops.size()));
 		for (DropItemConfig item : drops) {
+			Bukkit.getLogger().severe(DataStoreKt.decodePrefabs(item.render(1).getItemMeta().getPersistentDataContainer()).stream().findFirst().get().getFull());
 			Bukkit.getLogger().severe("Transform: " + item.canTransform());
+			Bukkit.getLogger().severe("Transform: " + transformIfAble);
 			if (this.transformIfAble && item.canTransform())
 				toTransform.add(item.render(amount));
 		}

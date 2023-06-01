@@ -263,8 +263,7 @@ public class BlockBreakListener implements Listener {
 
 		if (dropConfig.transformIfAble) {
 			final List<ItemStack> transform = dropConfig.renderTransform(biomeName, dropTool);
-			debug(transform.isEmpty() ? "no transform" : "do transform");
-			if (!transform.isEmpty()) {
+			if (transform != null && !transform.isEmpty()) {
 				doActualGenerate(transform, sourceLocation, player, dropName, blockName, blockConfig, 
 						alertBuffer, dropConfig);
 			}
@@ -335,10 +334,9 @@ public class BlockBreakListener implements Listener {
 		VeinConfig vc = dropConfig.getVeinNature();
 		Block origin = sourceLocation.getBlock();
 		for (ItemStack xform : items) {
-			BlockData sampleData = xform.getType().createBlockData();
-			Bukkit.broadcast(Component.text(sampleData.toString()));
-			if (BlockyBlocks.INSTANCE.isBlockyBlock(xform)) {
-				PrefabKey prefabKey = DataStoreKt.decodePrefabs(xform.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
+			BlockData sampleData = xform.getType().isBlock() ? xform.getType().createBlockData() : null;
+			PrefabKey prefabKey = DataStoreKt.decodePrefabs(xform.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
+			if (prefabKey != null) {
 				Optional<Map.Entry<BlockData, PrefabKey>> blockyData = BlockyPluginKt.getPrefabMap().entrySet().stream().filter(e -> e.getValue().equals(prefabKey)).findFirst();
 				if (blockyData.isPresent()) {
 					sampleData = blockyData.get().getKey();
@@ -374,7 +372,6 @@ public class BlockBreakListener implements Listener {
 				if (plugin.getTracking().testGen(walk.getLocation()) && blockConfig.checkGenerateBlock(walk)) {
 					Bukkit.broadcast(Component.text("HiddenOreGenerateEvent"));
 					HiddenOreGenerateEvent hoge = new HiddenOreGenerateEvent(player, walk, sampleData);
-					Bukkit.broadcast(Component.text(hoge.getTransform().toString()));
 					Bukkit.getPluginManager().callEvent(hoge);
 					if (!hoge.isCancelled()) {
 						walk.setBlockData(hoge.getTransform(), false);

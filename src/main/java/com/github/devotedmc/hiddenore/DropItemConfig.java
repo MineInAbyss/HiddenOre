@@ -4,7 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mineinabyss.blocky.api.BlockyBlocks;
+import com.mineinabyss.geary.papermc.datastore.DataStoreKt;
+import com.mineinabyss.geary.prefabs.PrefabKey;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
+import org.eclipse.sisu.inject.Logs;
 
 public class DropItemConfig {
 	private ItemStack template;
@@ -16,7 +21,14 @@ public class DropItemConfig {
 	}
 	
 	public boolean canTransform() {
-		return canTransform;
+		if (canTransform) return true;
+		else {
+			PrefabKey key = DataStoreKt.decodePrefabs(template.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
+			if (key != null) {
+				return BlockyBlocks.INSTANCE.isBlockyBlock(key);
+			}
+		}
+		return canTransform || BlockyBlocks.INSTANCE.isBlockyBlock(template);
 	}
 	
 	public ItemStack render(double multiplier) {
@@ -30,7 +42,7 @@ public class DropItemConfig {
 	
 	public static List<DropItemConfig> transform(List<ItemStack> items) {
 		ArrayList<DropItemConfig> drops = new ArrayList<DropItemConfig>(items.size());
-		
+		Bukkit.broadcast(Component.text(items.toString()));
 		for (ItemStack item : items) {
 			if (item != null) {
 				drops.add(new DropItemConfig(item));

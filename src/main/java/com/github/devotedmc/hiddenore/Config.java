@@ -22,6 +22,8 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -29,6 +31,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.eclipse.sisu.inject.Logs;
 
 /**
  * Someday it might be nice to refactor this to be a proper object.
@@ -415,14 +418,15 @@ public final class Config {
 				Boolean cSuppress = block.getBoolean("suppressDrops", false);
 
 				// add what blocks should be transformed, if transformation is used.
-				ConfigurationSection validTransforms = block.getConfigurationSection(
-						"validTransforms");
+				ConfigurationSection validTransforms = block.getConfigurationSection("validTransforms");
 				List<NamespacedKey> transformThese = new ArrayList<NamespacedKey>();
 				if (validTransforms != null) {
 					for (String transformL : validTransforms.getKeys(false)) {
-						ConfigurationSection transform = validTransforms.getConfigurationSection(
-								transformL);
+						Bukkit.getLogger().warning(transformL);
+						ConfigurationSection transform = validTransforms.getConfigurationSection(transformL);
 						String tBlockName = transform.getString("material");
+						PrefabKey tBlockyName = PrefabKey.Companion.ofOrNull(transform.getString("blocky", ""));
+						Bukkit.getLogger().warning(transform.getString("blocky", ""));
 						try {
 							Material tBlockMat = Material.getMaterial(tBlockName);
 							NamespacedKey tBlockKey = tBlockMat == null ? null : tBlockMat.getKey();
@@ -433,6 +437,9 @@ public final class Config {
 							HiddenOre.getPlugin().getLogger().warning(
 									"Failed to find valid transform material for " + tBlockName);
 							continue;
+						}
+						if (tBlockyName != null) {
+							transformThese.add(NamespacedKey.fromString(tBlockyName.getFull()));
 						}
 					}
 				} else {
@@ -484,8 +491,9 @@ public final class Config {
 		@SuppressWarnings("unchecked")
 		List<ItemStack> items = (List<ItemStack>) drop.getList("package",
 				new ArrayList<ItemStack>());
-		if (drops.isString("prefab")) {
-			PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(drops.getString("prefab", ""));
+		if (drop.isString("prefab")) {
+			PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(drop.getString("prefab", ""));
+			Bukkit.getLogger().severe("tester: " + drop.getString("prefab", ""));
 			if (prefabKey != null) {
 				items.add(ItemTrackingKt.getItemTracking().getProvider().serializePrefabToItemStack(prefabKey, null));
 			}
@@ -513,7 +521,7 @@ public final class Config {
 					areaHeight, areaSpan,
 					heightLength, densityLength, forceVisible);
 		}
-
+		Bukkit.getLogger().severe(items.toString());
 		DropConfig dc = new DropConfig(sourceDrop, DropItemConfig.transform(items), command,
 				transformIfAble, transformDropIfFails, transformMaxDropsIfFails,
 				dPrefix, grabLimits(drop, new DropLimitsConfig()), veinNature);
@@ -522,8 +530,7 @@ public final class Config {
 		if (biomes != null) {
 			for (String sourceBiome : biomes.getKeys(false)) {
 				// HiddenOre.getPlugin().getLogger().info("Loading config for biome " + sourceBiome);
-				DropLimitsConfig dlc = grabLimits(biomes.getConfigurationSection(sourceBiome),
-						dc.limits);
+				DropLimitsConfig dlc = grabLimits(biomes.getConfigurationSection(sourceBiome), dc.limits);
 				dc.addBiomeLimits(sourceBiome, dlc);
 			}
 		}
