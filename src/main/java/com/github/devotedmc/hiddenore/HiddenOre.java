@@ -8,6 +8,10 @@ import com.github.devotedmc.hiddenore.listeners.WorldGenerationListener;
 import com.github.devotedmc.hiddenore.tracking.BreakTracking;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.mineinabyss.blocky.api.BlockyBlocks;
+import com.mineinabyss.geary.addons.GearyPhase;
+import com.mineinabyss.geary.modules.GearyModuleKt;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,8 +24,8 @@ public class HiddenOre extends JavaPlugin {
 	private static CommandHandler commandHandler;
 
 	private static BreakTracking tracking;
-	private BukkitTask trackingSave;
-	private BukkitTask trackingMapSave;
+	private static BukkitTask trackingSave;
+	private static BukkitTask trackingMapSave;
 	
 	private static BlockBreakListener breakHandler;
 	private static PlayerListener playerListener;
@@ -31,46 +35,45 @@ public class HiddenOre extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		plugin = this;
-		
-		saveDefaultConfig();
-		reloadConfig();
+
+		if (Bukkit.getPluginManager().isPluginEnabled("Blocky")) {
+			GearyModuleKt.getGeary().getPipeline().intercept(GearyPhase.ENABLE, () -> {
+				startupFunctions(plugin);
+				return null;
+			});
+		} else startupFunctions(plugin);
+	}
+
+	public static void startupFunctions(HiddenOre plugin) {
+		plugin.saveDefaultConfig();
+		plugin.reloadConfig();
 		Config.loadConfig();
-		
+
 		tracking = new BreakTracking();
 		tracking.load();
-		trackingSave = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
-			public void run() {
-				tracking.save();
-			}
-		}, Config.trackSave, Config.trackSave);
-
-		trackingMapSave = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
-			public void run() {
-				tracking.saveMap();
-			}
-		}, Config.mapSave, Config.mapSave);
-
+		trackingSave = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> tracking.save(), Config.trackSave, Config.trackSave);
+		trackingMapSave = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> tracking.saveMap(), Config.mapSave, Config.mapSave);
 
 		exploitHandler = new ExploitListener(plugin);
-		this.getServer().getPluginManager().registerEvents(exploitHandler, this);
+		Bukkit.getServer().getPluginManager().registerEvents(exploitHandler, plugin);
 
 		breakHandler = new BlockBreakListener(plugin);
-		this.getServer().getPluginManager().registerEvents(breakHandler, this);
+		plugin.getServer().getPluginManager().registerEvents(breakHandler, plugin);
 
 		playerListener = new PlayerListener();
-		this.getServer().getPluginManager().registerEvents(playerListener, this);
-				
-		commandHandler = new CommandHandler(this);
-		this.getCommand("hiddenore").setExecutor(commandHandler);
-		
+		plugin.getServer().getPluginManager().registerEvents(playerListener, plugin);
+
+		commandHandler = new CommandHandler(plugin);
+		plugin.getCommand("hiddenore").setExecutor(commandHandler);
+
 		worldGen = new ArrayList<>();
-		
+
 		ConfigurationSection worldGenConfig = Config.instance.getWorldGenerations();
 		if (worldGenConfig != null) {
 			for (String key : worldGenConfig.getKeys(false)) {
 				// this.getLogger().log(Level.INFO, "Registered Ore Generation Suppression Listener for World {0}", key);
 				WorldGenerationListener list = new WorldGenerationListener(worldGenConfig.getConfigurationSection(key));
-				this.getServer().getPluginManager().registerEvents(list, this);
+				plugin.getServer().getPluginManager().registerEvents(list, plugin);
 				worldGen.add(list);
 			}
 		}

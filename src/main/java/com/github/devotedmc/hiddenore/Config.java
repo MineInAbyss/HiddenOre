@@ -422,11 +422,9 @@ public final class Config {
 				List<NamespacedKey> transformThese = new ArrayList<NamespacedKey>();
 				if (validTransforms != null) {
 					for (String transformL : validTransforms.getKeys(false)) {
-						Bukkit.getLogger().warning(transformL);
 						ConfigurationSection transform = validTransforms.getConfigurationSection(transformL);
 						String tBlockName = transform.getString("material");
 						PrefabKey tBlockyName = PrefabKey.Companion.ofOrNull(transform.getString("blocky", ""));
-						Bukkit.getLogger().warning(transform.getString("blocky", ""));
 						try {
 							Material tBlockMat = Material.getMaterial(tBlockName);
 							NamespacedKey tBlockKey = tBlockMat == null ? null : tBlockMat.getKey();
@@ -493,7 +491,6 @@ public final class Config {
 				new ArrayList<ItemStack>());
 		if (drop.isString("prefab")) {
 			PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(drop.getString("prefab", ""));
-			Bukkit.getLogger().severe("tester: " + drop.getString("prefab", ""));
 			if (prefabKey != null) {
 				items.add(ItemTrackingKt.getItemTracking().getProvider().serializePrefabToItemStack(prefabKey, null));
 			}
@@ -521,7 +518,7 @@ public final class Config {
 					areaHeight, areaSpan,
 					heightLength, densityLength, forceVisible);
 		}
-		Bukkit.getLogger().severe(items.toString());
+
 		DropConfig dc = new DropConfig(sourceDrop, DropItemConfig.transform(items), command,
 				transformIfAble, transformDropIfFails, transformMaxDropsIfFails,
 				dPrefix, grabLimits(drop, new DropLimitsConfig()), veinNature);

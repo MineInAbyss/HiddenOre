@@ -10,6 +10,7 @@ import com.mineinabyss.blocky.components.core.BlockyBlock;
 import com.mineinabyss.blocky.helpers.GenericHelpersKt;
 import com.mineinabyss.geary.papermc.datastore.DataStoreKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
+import com.mineinabyss.idofront.textcomponents.MiniMessageHelpersKt;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -31,6 +32,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -125,7 +127,6 @@ public class BlockBreakListener implements Listener {
 
 		boolean hasDrop = false;
 
-		Bukkit.broadcast(Component.text(Config.instance.defaultPrefix).color(NamedTextColor.BLUE));
 		StringBuilder alertUser = new StringBuilder().append(Config.instance.defaultPrefix);
 
 		String biomeName = b.getBiome().name();
@@ -293,7 +294,7 @@ public class BlockBreakListener implements Listener {
 
 			// Correct stats output.
 			for (ItemStack item: hoe.getDrops()) {
-				String name = item.getI18NDisplayName();
+				String name = MiniMessageHelpersKt.serialize(item.displayName());
 				log("STAT: Player {0} at {1} broke {2} - dropping {3} {4}",
 						player.getDisplayName(), player.getLocation(), blockName,
 						item.getAmount(), name);
@@ -336,12 +337,6 @@ public class BlockBreakListener implements Listener {
 		for (ItemStack xform : items) {
 			BlockData sampleData = xform.getType().isBlock() ? xform.getType().createBlockData() : null;
 			PrefabKey prefabKey = DataStoreKt.decodePrefabs(xform.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
-			if (prefabKey != null) {
-				Optional<Map.Entry<BlockData, PrefabKey>> blockyData = BlockyPluginKt.getPrefabMap().entrySet().stream().filter(e -> e.getValue().equals(prefabKey)).findFirst();
-				if (blockyData.isPresent()) {
-					sampleData = blockyData.get().getKey();
-				}
-			}
 			BlockData expressed = sampleData;
 			forceFacing = (vc == null ? -1 : (vc.getForceVisibleTransform() ? 0 : -1 )); // do index traverse on visible faces
 			// to ensure overall fairness but density in discovery, we add walk attempts to cover forced facing reveal
@@ -370,11 +365,12 @@ public class BlockBreakListener implements Listener {
 							(int) Math.round(u * z));
 				}
 				if (plugin.getTracking().testGen(walk.getLocation()) && blockConfig.checkGenerateBlock(walk)) {
-					Bukkit.broadcast(Component.text("HiddenOreGenerateEvent"));
 					HiddenOreGenerateEvent hoge = new HiddenOreGenerateEvent(player, walk, sampleData);
 					Bukkit.getPluginManager().callEvent(hoge);
 					if (!hoge.isCancelled()) {
-						walk.setBlockData(hoge.getTransform(), false);
+						if (prefabKey != null) {
+							BlockyBlocks.INSTANCE.placeBlockyBlock(walk.getLocation(), prefabKey);
+						} else walk.setBlockData(hoge.getTransform(), false);
 						expressed = hoge.getTransform();
 						cPlace --;
 						tryFacing = true;
@@ -395,7 +391,8 @@ public class BlockBreakListener implements Listener {
 //				String name = xform.hasItemMeta() && xform.getItemMeta().hasDisplayName() ?
 //						xform.getItemMeta().getDisplayName() : Config.getPrettyName(xform.getType().name());
 
-				String name = xform.getI18NDisplayName();
+				Component displayName = xform.hasItemMeta() && xform.getItemMeta().hasDisplayName() ? xform.getItemMeta().displayName() : xform.displayName();
+				String name = MiniMessageHelpersKt.toPlainText(displayName);
 
 //				log("STAT: Player {0} at {1} broke {2} - replacing with {3} {4} as {6}",
 //						player.getDisplayName(), player.getLocation(), blockName,

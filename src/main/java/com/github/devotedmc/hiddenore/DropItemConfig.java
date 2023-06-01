@@ -17,7 +17,8 @@ public class DropItemConfig {
 	
 	public DropItemConfig(ItemStack template) {
 		this.template = template;
-		this.canTransform = template.getType().isBlock() || BlockyBlocks.INSTANCE.isBlockyBlock(template);
+		PrefabKey key = DataStoreKt.decodePrefabs(template.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
+		this.canTransform = (key != null && BlockyBlocks.INSTANCE.isBlockyBlock(key)) || template.getType().isBlock();
 	}
 	
 	public boolean canTransform() {
@@ -28,7 +29,7 @@ public class DropItemConfig {
 				return BlockyBlocks.INSTANCE.isBlockyBlock(key);
 			}
 		}
-		return canTransform || BlockyBlocks.INSTANCE.isBlockyBlock(template);
+		return canTransform;
 	}
 	
 	public ItemStack render(double multiplier) {
@@ -42,7 +43,6 @@ public class DropItemConfig {
 	
 	public static List<DropItemConfig> transform(List<ItemStack> items) {
 		ArrayList<DropItemConfig> drops = new ArrayList<DropItemConfig>(items.size());
-		Bukkit.broadcast(Component.text(items.toString()));
 		for (ItemStack item : items) {
 			if (item != null) {
 				drops.add(new DropItemConfig(item));

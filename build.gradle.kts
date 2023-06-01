@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
 	compileOnly(hiddenlibs.minecraft.plugin.worldguard)
+	compileOnly(libs.bundles.idofront.core)
 	compileOnly(hiddenlibs.minecraft.plugin.geary.papermc)
 	compileOnly(hiddenlibs.minecraft.plugin.blocky)
 }
