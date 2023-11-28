@@ -2,6 +2,7 @@ package com.github.devotedmc.hiddenore;
 
 import com.github.devotedmc.hiddenore.listeners.ConfigDeferralListener;
 import com.mineinabyss.blocky.api.BlockyBlocks;
+import com.mineinabyss.geary.modules.GearyModuleKt;
 import com.mineinabyss.geary.papermc.tracking.items.GearyItemProvider;
 import com.mineinabyss.geary.papermc.tracking.items.ItemTrackingKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
@@ -492,7 +493,7 @@ public final class Config {
 		if (drop.isString("prefab")) {
 			PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(drop.getString("prefab", ""));
 			if (prefabKey != null) {
-				items.add(ItemTrackingKt.getItemTracking().getProvider().serializePrefabToItemStack(prefabKey, null));
+				items.add(ItemTrackingKt.getGearyItems().createItem(prefabKey, null));
 			}
 		}
 		boolean transformIfAble = drop.getBoolean("transformIfAble", false);

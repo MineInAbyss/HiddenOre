@@ -4,15 +4,11 @@ import com.github.devotedmc.hiddenore.*;
 import com.github.devotedmc.hiddenore.events.HiddenOreEvent;
 import com.github.devotedmc.hiddenore.events.HiddenOreGenerateEvent;
 import com.github.devotedmc.hiddenore.util.FakePlayer;
-import com.mineinabyss.blocky.BlockyPluginKt;
 import com.mineinabyss.blocky.api.BlockyBlocks;
-import com.mineinabyss.blocky.components.core.BlockyBlock;
-import com.mineinabyss.blocky.helpers.GenericHelpersKt;
 import com.mineinabyss.geary.papermc.datastore.DataStoreKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
 import com.mineinabyss.idofront.textcomponents.MiniMessageHelpersKt;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -32,10 +28,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.checkerframework.checker.units.qual.C;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Level;
 
 /**
