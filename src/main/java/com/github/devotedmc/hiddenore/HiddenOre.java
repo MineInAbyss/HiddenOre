@@ -36,12 +36,7 @@ public class HiddenOre extends JavaPlugin {
 	public void onEnable() {
 		plugin = this;
 
-		if (Bukkit.getPluginManager().isPluginEnabled("Blocky")) {
-			GearyModuleKt.getGeary().getPipeline().runOnOrAfter(GearyPhase.ENABLE, () -> {
-				startupFunctions(plugin);
-				return null;
-			});
-		} else startupFunctions(plugin);
+		startupFunctions(plugin);
 	}
 
 	public static void startupFunctions(HiddenOre plugin) {

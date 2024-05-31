@@ -7,8 +7,10 @@ import com.github.devotedmc.hiddenore.util.FakePlayer;
 import com.mineinabyss.blocky.api.BlockyBlocks;
 import com.mineinabyss.geary.papermc.datastore.DataStoreKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
+import com.mineinabyss.idofront.textcomponents.IdofrontTextComponents;
 import com.mineinabyss.idofront.textcomponents.MiniMessageHelpersKt;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -192,7 +194,7 @@ public class BlockBreakListener implements Listener {
 			}
 			String alert = alertUser.toString();
 			if (alert.length() > 0) {
-				event.getPlayer().sendMessage(ChatColor.GOLD + alert);
+				event.getPlayer().sendMessage(MiniMessageHelpersKt.miniMsg(alert, IdofrontTextComponents.INSTANCE.getGlobalResolver()).color(NamedTextColor.GOLD));
 			}
 		}
 		
@@ -291,7 +293,7 @@ public class BlockBreakListener implements Listener {
 
 			// Correct stats output.
 			for (ItemStack item: hoe.getDrops()) {
-				String name = MiniMessageHelpersKt.serialize(item.displayName());
+				String name = MiniMessageHelpersKt.serialize(item.getItemMeta().itemName());
 				log("STAT: Player {0} at {1} broke {2} - dropping {3} {4}",
 						player.getDisplayName(), player.getLocation(), blockName,
 						item.getAmount(), name);
@@ -388,7 +390,7 @@ public class BlockBreakListener implements Listener {
 //				String name = xform.hasItemMeta() && xform.getItemMeta().hasDisplayName() ?
 //						xform.getItemMeta().getDisplayName() : Config.getPrettyName(xform.getType().name());
 
-				Component displayName = xform.hasItemMeta() && xform.getItemMeta().hasDisplayName() ? xform.getItemMeta().displayName() : xform.displayName();
+				Component displayName = xform.hasItemMeta() ? xform.getItemMeta().hasDisplayName() ? xform.getItemMeta().displayName() : xform.getItemMeta().itemName() : Component.text(xform.getI18NDisplayName());
 				String name = MiniMessageHelpersKt.toPlainText(displayName);
 
 //				log("STAT: Player {0} at {1} broke {2} - replacing with {3} {4} as {6}",
@@ -403,7 +405,7 @@ public class BlockBreakListener implements Listener {
 						
 						buildAlert(customAlerts, null, name, placed, " nearby");
 
-						player.sendMessage(ChatColor.GOLD + customAlerts.toString());
+						player.sendMessage(MiniMessageHelpersKt.miniMsg(customAlerts.toString(), IdofrontTextComponents.INSTANCE.getGlobalResolver()));
 					} else {
 						// otherwise, we aggregate our notices and send them after all drop / gen is done.
 						if (Config.isListDrops()) {
@@ -418,7 +420,8 @@ public class BlockBreakListener implements Listener {
 	private void buildAlert(StringBuilder alertBuilder, ItemStack item, String nameOverride, int amount, String postfix) {
 		String name = nameOverride;
 		if (name == null && item != null) {
-			name = item.getI18NDisplayName();
+			name = MiniMessageHelpersKt.toPlainText(item.hasItemMeta() ? item.getItemMeta().hasDisplayName() ? item.getItemMeta().displayName() : item.getItemMeta().hasItemName() ? item.getItemMeta().itemName() : Component.empty() : Component.empty());
+			if (name.isEmpty()) name = item.getI18NDisplayName();
 		}
 		
 		alertBuilder.append(" ").append(amount).append(" ").append(name);

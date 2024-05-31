@@ -1,21 +1,20 @@
 package com.github.devotedmc.hiddenore;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-
 import com.mineinabyss.blocky.BlockyPluginKt;
 import com.mineinabyss.geary.papermc.datastore.namespacedkey.NamespacedKeyHelpersKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class BlockConfig {
 	private NamespacedKey material;

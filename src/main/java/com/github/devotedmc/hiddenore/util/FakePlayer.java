@@ -23,16 +23,19 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.sign.Side;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.*;
 import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.InventoryView.Property;
@@ -50,15 +53,14 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
+import org.jetbrains.annotations.*;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class FakePlayer implements Player {
 	private final ItemStack inHand;
@@ -785,6 +787,11 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public @NotNull CompletableFuture<Boolean> teleportAsync(@NotNull Location loc, @NotNull PlayerTeleportEvent.TeleportCause cause, @NotNull TeleportFlag @NotNull ... teleportFlags) {
+		return null;
+	}
+
+	@Override
 	public List<Entity> getNearbyEntities(double x, double y, double z) {
 
 		return null;
@@ -1222,6 +1229,11 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public void damage(double amount, @NotNull DamageSource damageSource) {
+
+	}
+
+	@Override
 	public double getHealth() {
 
 		return 0;
@@ -1229,6 +1241,11 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void setHealth(double health) {
+
+	}
+
+	@Override
+	public void heal(double v, @NotNull EntityRegainHealthEvent.RegainReason regainReason) {
 
 	}
 
@@ -1478,6 +1495,31 @@ public class FakePlayer implements Player {
 	public InetSocketAddress getAddress() {
 
 		return null;
+	}
+
+	@Override
+	public @Nullable InetSocketAddress getHAProxyAddress() {
+		return null;
+	}
+
+	@Override
+	public boolean isTransferred() {
+		return false;
+	}
+
+	@Override
+	public @NotNull CompletableFuture<byte[]> retrieveCookie(@NotNull NamespacedKey key) {
+		return null;
+	}
+
+	@Override
+	public void storeCookie(@NotNull NamespacedKey key, @NotNull byte[] value) {
+
+	}
+
+	@Override
+	public void transfer(@NotNull String host, int port) {
+
 	}
 
 	@Override
@@ -1969,6 +2011,21 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public @Range(from = 0L, to = 2147483647L) int calculateTotalExperiencePoints() {
+		return 0;
+	}
+
+	@Override
+	public void setExperienceLevelAndProgress(@Range(from = 0L, to = 2147483647L) int totalExperience) {
+
+	}
+
+	@Override
+	public int getExperiencePointsNeededForNextLevel() {
+		return 0;
+	}
+
+	@Override
 	public float getExhaustion() {
 
 		return 0;
@@ -2095,12 +2152,27 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public @Nullable Location getRespawnLocation() {
+		return null;
+	}
+
+	@Override
 	public void setBedSpawnLocation(Location location) {
 
 	}
 
 	@Override
+	public void setRespawnLocation(@Nullable Location location) {
+
+	}
+
+	@Override
 	public void setBedSpawnLocation(Location location, boolean force) {
+
+	}
+
+	@Override
+	public void setRespawnLocation(@Nullable Location location, boolean force) {
 
 	}
 
@@ -2463,6 +2535,16 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public int getItemInUseTicks() {
+		return 0;
+	}
+
+	@Override
+	public void setItemInUseTicks(int ticks) {
+
+	}
+
+	@Override
 	public InventoryView openMerchant(Merchant arg0, boolean arg1) {
 		return null;
 	}
@@ -2634,6 +2716,16 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void setResourcePack(@NotNull String url, byte @Nullable [] hash, @Nullable Component prompt, boolean force) {
+
+	}
+
+	@Override
+	public void setResourcePack(@NotNull UUID id, @NotNull String url, @Nullable byte[] hash, @Nullable String prompt, boolean force) {
+
+	}
+
+	@Override
+	public void setResourcePack(@NotNull UUID uuid, @NotNull String url, byte @Nullable [] hash, @Nullable Component prompt, boolean force) {
 
 	}
 
@@ -2978,6 +3070,21 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public @NotNull @Unmodifiable Set<Long> getSentChunkKeys() {
+		return Set.of();
+	}
+
+	@Override
+	public @NotNull @Unmodifiable Set<Chunk> getSentChunks() {
+		return Set.of();
+	}
+
+	@Override
+	public boolean isChunkSent(long chunkKey) {
+		return false;
+	}
+
+	@Override
 	public BlockFace getFacing() {
 		// TODO Auto-generated method stub
 		return null;
@@ -2991,6 +3098,31 @@ public class FakePlayer implements Player {
 
 	@Override
 	public @NotNull SpawnCategory getSpawnCategory() {
+		return null;
+	}
+
+	@Override
+	public boolean isInWorld() {
+		return false;
+	}
+
+	@Override
+	public @Nullable String getAsString() {
+		return "";
+	}
+
+	@Override
+	public @Nullable EntitySnapshot createSnapshot() {
+		return null;
+	}
+
+	@Override
+	public @NotNull Entity copy() {
+		return null;
+	}
+
+	@Override
+	public @NotNull Entity copy(@NotNull Location to) {
 		return null;
 	}
 
@@ -3032,6 +3164,16 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void sendBlockUpdate(@NotNull Location loc, @NotNull TileState tileState) throws IllegalArgumentException {
+
+	}
+
+	@Override
+	public void sendPotionEffectChange(@NotNull LivingEntity entity, @NotNull PotionEffect effect) {
+
+	}
+
+	@Override
+	public void sendPotionEffectChangeRemove(@NotNull LivingEntity entity, @NotNull PotionEffectType type) {
 
 	}
 
@@ -3233,6 +3375,31 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public int getActiveItemRemainingTime() {
+		return 0;
+	}
+
+	@Override
+	public void setActiveItemRemainingTime(@Range(from = 0L, to = 2147483647L) int ticks) {
+
+	}
+
+	@Override
+	public boolean hasActiveItem() {
+		return false;
+	}
+
+	@Override
+	public int getActiveItemUsedTime() {
+		return 0;
+	}
+
+	@Override
+	public @NotNull EquipmentSlot getActiveItemHand() {
+		return null;
+	}
+
+	@Override
 	public float getSidewaysMovement() {
 		return 0;
 	}
@@ -3245,6 +3412,16 @@ public class FakePlayer implements Player {
 	@Override
 	public float getForwardsMovement() {
 		return 0;
+	}
+
+	@Override
+	public void startUsingItem(@NotNull EquipmentSlot hand) {
+
+	}
+
+	@Override
+	public void completeUsingActiveItem() {
+
 	}
 
 	@Override
@@ -3335,6 +3512,16 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public void setNoPhysics(boolean noPhysics) {
+
+	}
+
+	@Override
+	public boolean hasNoPhysics() {
+		return false;
+	}
+
+	@Override
 	public boolean isJumping() {
 		// TODO Auto-generated method stub
 		return false;
@@ -3361,6 +3548,16 @@ public class FakePlayer implements Player {
 	@Override
 	public void setArrowsInBody(int count, boolean fireEvent) {
 
+	}
+
+	@Override
+	public void setNextArrowRemoval(@Range(from = 0L, to = 2147483647L) int ticks) {
+
+	}
+
+	@Override
+	public int getNextArrowRemoval() {
+		return 0;
 	}
 
 	@Override
@@ -3719,6 +3916,21 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public void addResourcePack(@NotNull UUID id, @NotNull String url, @Nullable byte[] hash, @Nullable String prompt, boolean force) {
+
+	}
+
+	@Override
+	public void removeResourcePack(@NotNull UUID id) {
+
+	}
+
+	@Override
+	public void removeResourcePacks() {
+
+	}
+
+	@Override
 	public void hideTitle() {
 		// TODO Auto-generated method stub
 
@@ -3977,6 +4189,16 @@ public class FakePlayer implements Player {
 	@Override
 	public void setBeeStingersInBody(int count) {
 
+	}
+
+	@Override
+	public void setNextBeeStingerRemoval(@Range(from = 0L, to = 2147483647L) int ticks) {
+
+	}
+
+	@Override
+	public int getNextBeeStingerRemoval() {
+		return 0;
 	}
 
 	@Override
