@@ -2,24 +2,10 @@ package com.github.devotedmc.hiddenore;
 
 import com.github.devotedmc.hiddenore.listeners.ConfigDeferralListener;
 import com.mineinabyss.components.layer.Layer;
-import com.mineinabyss.components.layer.LayerKey;
-import com.mineinabyss.deeperworld.world.section.SectionUtils;
 import com.mineinabyss.features.helpers.LayerUtilsKt;
 import com.mineinabyss.features.helpers.di.Features;
 import com.mineinabyss.geary.papermc.tracking.items.ItemTrackingKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
-
-import java.io.File;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import com.mineinabyss.plugin.MineInAbyssPlugin;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -27,6 +13,11 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
+
+import java.io.File;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * Someday it might be nice to refactor this to be a proper object.
@@ -39,7 +30,6 @@ public final class Config {
 
 	public static Config instance;
 	public static boolean isDebug;
-	public static RegionNameSupplier regionNameSupplier;
 	public static LayerNameSupplier layerNameSupplier;
 
 	public String defaultPrefix;
@@ -48,7 +38,6 @@ public final class Config {
 	public boolean ignoreSilktouch;
 	public Map<String, DropConfig> dropConfigs;
 	public Map<UUID, Map<NamespacedKey, List<BlockConfig>>> blockConfigs;
-	public Map<String, Map<NamespacedKey, List<BlockConfig>>> regionConfigs;
 	public Map<String, Map<NamespacedKey, List<BlockConfig>>> layerConfigs;
 	public Map<String, Map<NamespacedKey, List<BlockConfig>>> preloadBlockConfigs;
 	public Map<String, NameConfig> prettyNames;
@@ -72,7 +61,6 @@ public final class Config {
 	private Config() {
 		dropConfigs = new HashMap<String, DropConfig>();
 		blockConfigs = new HashMap<UUID, Map<NamespacedKey, List<BlockConfig>>>();
-		regionConfigs = new HashMap<>();
 		layerConfigs = new HashMap<>();
 		preloadBlockConfigs = new HashMap<String, Map<NamespacedKey, List<BlockConfig>>>();
 		prettyNames = new HashMap<String, NameConfig>();
@@ -115,7 +103,6 @@ public final class Config {
 		mapFile = new File(HiddenOre.getPlugin().getDataFolder(), mapFileName);
 		mapSave = file.getLong("map_save_ticks", mapSave);
 
-		regionNameSupplier = initRegionNameSupplier();
 		layerNameSupplier = initLayerNameSupplier();
 
 		i.ignoreSilktouch = file.getBoolean("ignore_silktouch", i.ignoreSilktouch);
@@ -319,26 +306,6 @@ public final class Config {
 			HiddenOre.getPlugin().getServer().getPluginManager()
 					.registerEvents(new ConfigDeferralListener(), HiddenOre.getPlugin());
 
-		}
-
-		ConfigurationSection regions = file.getConfigurationSection("regions");
-		if (regions != null) { // has per-region blocks!
-			for (String region : regions.getKeys(false)) {
-
-				Map<NamespacedKey, List<BlockConfig>> regionBlocksConfig = i.regionConfigs.getOrDefault(
-						region, new HashMap<>());
-
-				ConfigurationSection regionConfig = regions.getConfigurationSection(region);
-				if (regionConfig != null) {
-					ConfigurationSection regionBlocks = regionConfig.getConfigurationSection(
-							"blocks");
-					if (regionBlocks != null) {
-						grabBlocks(region, regionBlocksConfig, regionBlocks, i);
-					}
-				}
-
-				i.regionConfigs.put(region, regionBlocksConfig);
-			}
 		}
 
 		ConfigurationSection layers = file.getConfigurationSection("layers");
@@ -601,13 +568,6 @@ public final class Config {
 
 	public static BlockConfig isDropBlock(UUID world, BlockData block, Location blockLocation) {
 		List<BlockConfig> bcs = new ArrayList<>();
-		List<BlockConfig> wbcs = regionNameSupplier.getRegionsForLocation(blockLocation).stream()
-				.filter(instance.regionConfigs::containsKey).findFirst()
-				.map(instance.regionConfigs::get)
-				.orElseGet(() ->
-						instance.blockConfigs.getOrDefault(world,
-								instance.blockConfigs.get(null))).get(block.getMaterial().getKey());
-		if (wbcs != null) bcs.addAll(wbcs);
 
 		List<BlockConfig> lbcs = instance.layerConfigs.getOrDefault(Optional.ofNullable(layerNameSupplier.getLayerForLocation(blockLocation)).orElse(""), new HashMap<>()).getOrDefault(block.getMaterial().getKey(), new ArrayList<>());
 		if (lbcs != null) bcs.addAll(lbcs);
@@ -668,23 +628,6 @@ public final class Config {
 
 	public static PlayerStateConfig getState(String state) {
 		return instance.stateMasterList.get(state);
-	}
-
-	private static RegionNameSupplier initRegionNameSupplier() {
-		try {
-			RegionContainer regionContainer = WorldGuard.getInstance().getPlatform()
-					.getRegionContainer();
-
-			return loc -> StreamSupport.stream(
-					Optional.ofNullable(regionContainer.get(BukkitAdapter.adapt(loc.getWorld())))
-							.map(manager ->
-									manager.getApplicableRegions(BukkitAdapter.asBlockVector(loc))
-											.spliterator()).orElse(
-									Spliterators.emptySpliterator()),
-					false).map(ProtectedRegion::getId).collect(Collectors.toList());
-		} catch (NoClassDefFoundError e) {
-			return RegionNameSupplier.NOOP_REGION_ITERATOR;
-		}
 	}
 
 	private static LayerNameSupplier initLayerNameSupplier() {
