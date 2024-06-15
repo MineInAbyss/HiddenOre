@@ -2,3 +2,5 @@
 minecraft-plugin-worldguard = "com.sk89q.worldguard:worldguard-bukkit:7.0.10"
 minecraft-plugin-geary-papermc = "com.mineinabyss:geary-papermc:0.30.1"
 minecraft-plugin-blocky = "com.mineinabyss:blocky:0.10.0"
+minecraft-plugin-deeperworld = "com.mineinabyss:deeperworld:0.11.0"
+minecraft-plugin-mineinabyss = "com.mineinabyss:mineinabyss:0.14.0-dev.10"
