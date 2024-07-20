@@ -10,6 +10,7 @@ import io.papermc.paper.entity.TeleportFlag;
 import io.papermc.paper.math.Position;
 import io.papermc.paper.threadedregions.scheduler.EntityScheduler;
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.TriState;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -1391,6 +1392,11 @@ public class FakePlayer implements Player {
 	public Set<String> getListeningPluginChannels() {
 
 		return null;
+	}
+
+	@Override
+	public @NotNull Identity identity() {
+		return Player.super.identity();
 	}
 
 	@Override
@@ -3618,6 +3624,11 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public boolean canUseEquipmentSlot(@NotNull EquipmentSlot slot) {
+		return false;
+	}
+
+	@Override
 	public void setInvisible(boolean arg0) {
 		// TODO Auto-generated method stub
 
@@ -3948,6 +3959,11 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void sendHurtAnimation(float yaw) {
+
+	}
+
+	@Override
+	public void sendLinks(@NotNull ServerLinks links) {
 
 	}
 
