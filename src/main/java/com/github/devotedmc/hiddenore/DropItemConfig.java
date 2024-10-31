@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mineinabyss.blocky.api.BlockyBlocks;
+import com.mineinabyss.geary.modules.Geary;
+import com.mineinabyss.geary.papermc.GearyPaperModuleKt;
 import com.mineinabyss.geary.papermc.datastore.DataStoreKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
 import net.kyori.adventure.text.Component;
@@ -16,17 +18,19 @@ public class DropItemConfig {
 	private boolean canTransform;
 	
 	public DropItemConfig(ItemStack template) {
+		Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGlobal();
 		this.template = template;
-		PrefabKey key = DataStoreKt.decodePrefabs(template.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
-		this.canTransform = (key != null && BlockyBlocks.INSTANCE.isBlockyBlock(key)) || template.getType().isBlock();
+		PrefabKey key = DataStoreKt.decodePrefabs(gearyWorld, template.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
+		this.canTransform = (key != null && BlockyBlocks.INSTANCE.isBlockyBlock(gearyWorld, key)) || template.getType().isBlock();
 	}
 	
 	public boolean canTransform() {
 		if (canTransform) return true;
 		else {
-			PrefabKey key = DataStoreKt.decodePrefabs(template.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
+			Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGlobal();
+			PrefabKey key = DataStoreKt.decodePrefabs(gearyWorld, template.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
 			if (key != null) {
-				return BlockyBlocks.INSTANCE.isBlockyBlock(key);
+				return BlockyBlocks.INSTANCE.isBlockyBlock(gearyWorld, key);
 			}
 		}
 		return canTransform;

@@ -4,6 +4,9 @@ import com.github.devotedmc.hiddenore.listeners.ConfigDeferralListener;
 import com.mineinabyss.components.layer.Layer;
 import com.mineinabyss.features.helpers.LayerUtilsKt;
 import com.mineinabyss.features.helpers.di.Features;
+import com.mineinabyss.geary.modules.Geary;
+import com.mineinabyss.geary.papermc.GearyPaperModuleKt;
+import com.mineinabyss.geary.papermc.tracking.blocks.BlockTrackingKt;
 import com.mineinabyss.geary.papermc.tracking.items.ItemTrackingKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
 import org.bukkit.Location;
@@ -477,7 +480,8 @@ public final class Config {
 		if (drop.isString("prefab")) {
 			PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(drop.getString("prefab", ""));
 			if (prefabKey != null) {
-				items.add(ItemTrackingKt.getGearyItems().createItem(prefabKey, null));
+				Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGlobal();
+				items.add(gearyWorld.getAddon(ItemTrackingKt.getItemTracking()).createItem(prefabKey, null));
 			}
 		}
 		boolean transformIfAble = drop.getBoolean("transformIfAble", false);

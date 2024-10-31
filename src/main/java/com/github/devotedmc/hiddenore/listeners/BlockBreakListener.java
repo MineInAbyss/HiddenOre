@@ -5,6 +5,8 @@ import com.github.devotedmc.hiddenore.events.HiddenOreEvent;
 import com.github.devotedmc.hiddenore.events.HiddenOreGenerateEvent;
 import com.github.devotedmc.hiddenore.util.FakePlayer;
 import com.mineinabyss.blocky.api.BlockyBlocks;
+import com.mineinabyss.geary.modules.Geary;
+import com.mineinabyss.geary.papermc.GearyPaperModuleKt;
 import com.mineinabyss.geary.papermc.datastore.DataStoreKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
 import com.mineinabyss.idofront.textcomponents.IdofrontTextComponents;
@@ -335,7 +337,8 @@ public class BlockBreakListener implements Listener {
 		Block origin = sourceLocation.getBlock();
 		for (ItemStack xform : items) {
 			BlockData sampleData = xform.getType().isBlock() ? xform.getType().createBlockData() : null;
-			PrefabKey prefabKey = DataStoreKt.decodePrefabs(xform.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
+			Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGearyWorld(origin.getWorld());
+			PrefabKey prefabKey = DataStoreKt.decodePrefabs(gearyWorld, xform.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
 			BlockData expressed = sampleData;
 			forceFacing = (vc == null ? -1 : (vc.getForceVisibleTransform() ? 0 : -1 )); // do index traverse on visible faces
 			// to ensure overall fairness but density in discovery, we add walk attempts to cover forced facing reveal
