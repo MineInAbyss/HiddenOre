@@ -470,13 +470,14 @@ public final class Config {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private static DropConfig grabDropConfig(ConfigurationSection drops, String sourceDrop) {
 		// HiddenOre.getPlugin().getLogger().info("Loading config for drop " + sourceDrop);
 		ConfigurationSection drop = drops.getConfigurationSection(sourceDrop);
 		String dPrefix = drop.getString("prefix", null);
 		@SuppressWarnings("unchecked")
-		List<ItemStack> items = (List<ItemStack>) drop.getList("package",
-				new ArrayList<ItemStack>());
+		List<ItemStack> items = (List<ItemStack>) drop.getList("package", new ArrayList<ItemStack>());
+		items.addAll(drop.getStringList("materials").stream().map(Material::matchMaterial).filter(Objects::nonNull).map(ItemStack::new).toList());
 		if (drop.isString("prefab")) {
 			PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(drop.getString("prefab", ""));
 			if (prefabKey != null) {
