@@ -191,11 +191,11 @@ public class BlockBreakListener implements Listener {
 			}
 		}
 		if (Config.isAlertUser() && hasDrop) {
-			if (Config.isListDrops()) {
-				alertUser.deleteCharAt(alertUser.length() - 1);
-			}
 			String alert = alertUser.toString();
-			if (alert.length() > 0) {
+			if (alert.length() > Config.instance.defaultPrefix.length()) {     // Only alert player if something was dropped.
+                if (Config.isListDrops()) {
+                    alert = alert.substring(0, alert.length() - 1); // Remove trailing comma.
+                }
 				event.getPlayer().sendMessage(MiniMessageHelpersKt.miniMsg(alert, IdofrontTextComponents.INSTANCE.getGlobalResolver()).color(NamedTextColor.GOLD));
 			}
 		}
@@ -315,7 +315,6 @@ public class BlockBreakListener implements Listener {
 					if (Config.isListDrops()) {
 						for (ItemStack item : hoe.getDrops()) {
 							buildAlert(alertBuffer, item, null, item.getAmount(), ",");
-
 						}
 					}
 				}
@@ -426,7 +425,8 @@ public class BlockBreakListener implements Listener {
 			name = MiniMessageHelpersKt.toPlainText(item.hasItemMeta() ? item.getItemMeta().hasDisplayName() ? item.getItemMeta().displayName() : item.getItemMeta().hasItemName() ? item.getItemMeta().itemName() : Component.empty() : Component.empty());
 			if (name.isEmpty()) name = item.getI18NDisplayName();
 		}
-		
+	
+
 		alertBuilder.append(" ").append(amount).append(" ").append(name);
 		if (postfix != null) {
 			alertBuilder.append(postfix);
