@@ -6,6 +6,7 @@ import com.destroystokyo.paper.block.TargetBlockInfo;
 import com.destroystokyo.paper.entity.TargetEntityInfo;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import io.papermc.paper.entity.LookAnchor;
+import io.papermc.paper.entity.PlayerGiveResult;
 import io.papermc.paper.entity.TeleportFlag;
 import io.papermc.paper.math.Position;
 import io.papermc.paper.threadedregions.scheduler.EntityScheduler;
@@ -51,7 +52,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.*;
@@ -62,6 +62,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class FakePlayer implements Player {
 	private final ItemStack inHand;
@@ -1487,6 +1488,16 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public int getPlayerListOrder() {
+		return 0;
+	}
+
+	@Override
+	public void setPlayerListOrder(int i) {
+
+	}
+
+	@Override
 	public void setCompassTarget(Location loc) {
 
 	}
@@ -2183,6 +2194,16 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public Collection<EnderPearl> getEnderPearls() {
+		return List.of();
+	}
+
+	@Override
+	public Input getCurrentInput() {
+		return null;
+	}
+
+	@Override
 	public boolean getAllowFlight() {
 
 		return false;
@@ -2466,6 +2487,26 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public void sendEntityEffect(EntityEffect entityEffect, Entity entity) {
+
+	}
+
+	@Override
+	public PlayerGiveResult give(Collection<ItemStack> collection, boolean b) {
+		return null;
+	}
+
+	@Override
+	public int getDeathScreenScore() {
+		return 0;
+	}
+
+	@Override
+	public void setDeathScreenScore(int i) {
+
+	}
+
+	@Override
 	public @NotNull Component name() {
 		return null;
 	}
@@ -2578,6 +2619,21 @@ public class FakePlayer implements Player {
 	@Override
 	public boolean isDeeplySleeping() {
 		return false;
+	}
+
+	@Override
+	public boolean hasCooldown(ItemStack itemStack) {
+		return false;
+	}
+
+	@Override
+	public int getCooldown(ItemStack itemStack) {
+		return 0;
+	}
+
+	@Override
+	public void setCooldown(ItemStack itemStack, int i) {
+
 	}
 
 	@Override
@@ -2844,6 +2900,11 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public void setRiptiding(boolean b) {
+
+	}
+
+	@Override
 	public boolean isPersistent() {
 		return false;
 	}
@@ -2887,6 +2948,11 @@ public class FakePlayer implements Player {
 	@Override
 	public void wakeup(boolean setSpawnLocation) {
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void startRiptideAttack(int i, float v, @org.jspecify.annotations.Nullable ItemStack itemStack) {
 
 	}
 
@@ -3305,8 +3371,28 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public @org.jspecify.annotations.Nullable Item dropItem(int i, int i1, boolean b, @org.jspecify.annotations.Nullable Consumer<Item> consumer) {
+		return null;
+	}
+
+	@Override
+	public @org.jspecify.annotations.Nullable Item dropItem(EquipmentSlot equipmentSlot, int i, boolean b, @org.jspecify.annotations.Nullable Consumer<Item> consumer) {
+		return null;
+	}
+
+	@Override
+	public @org.jspecify.annotations.Nullable Item dropItem(ItemStack itemStack, boolean b, @org.jspecify.annotations.Nullable Consumer<Item> consumer) {
+		return null;
+	}
+
+	@Override
 	public Location getPotentialBedLocation() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @org.jspecify.annotations.Nullable Location getPotentialRespawnLocation() {
 		return null;
 	}
 
@@ -3868,6 +3954,11 @@ public class FakePlayer implements Player {
 	@Override
 	public @NotNull String getScoreboardEntryName() {
 		return null;
+	}
+
+	@Override
+	public void broadcastHurtAnimation(@NotNull Collection<Player> collection) {
+
 	}
 
 	@Override
