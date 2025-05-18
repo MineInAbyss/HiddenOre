@@ -337,7 +337,7 @@ public class BlockBreakListener implements Listener {
 		for (ItemStack xform : items) {
 			BlockData sampleData = xform.getType().isBlock() ? xform.getType().createBlockData() : null;
 			Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGearyWorld(origin.getWorld());
-			PrefabKey prefabKey = DataStoreKt.decodePrefabs(gearyWorld, xform.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
+			PrefabKey prefabKey = DataStoreKt.decodePrefabs(gearyWorld, xform.getPersistentDataContainer()).stream().findFirst().orElse(null);
 			BlockData expressed = sampleData;
 			forceFacing = (vc == null ? -1 : (vc.getForceVisibleTransform() ? 0 : -1 )); // do index traverse on visible faces
 			// to ensure overall fairness but density in discovery, we add walk attempts to cover forced facing reveal

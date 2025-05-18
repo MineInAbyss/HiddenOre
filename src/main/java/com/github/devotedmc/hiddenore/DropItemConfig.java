@@ -20,7 +20,7 @@ public class DropItemConfig {
 	public DropItemConfig(ItemStack template) {
 		Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGlobal();
 		this.template = template;
-		PrefabKey key = DataStoreKt.decodePrefabs(gearyWorld, template.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
+		PrefabKey key = DataStoreKt.decodePrefabs(gearyWorld, template.getPersistentDataContainer()).stream().findFirst().orElse(null);
 		this.canTransform = (key != null && BlockyBlocks.INSTANCE.isBlockyBlock(gearyWorld, key)) || template.getType().isBlock();
 	}
 	
@@ -28,7 +28,7 @@ public class DropItemConfig {
 		if (canTransform) return true;
 		else {
 			Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGlobal();
-			PrefabKey key = DataStoreKt.decodePrefabs(gearyWorld, template.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
+			PrefabKey key = DataStoreKt.decodePrefabs(gearyWorld, template.getPersistentDataContainer()).stream().findFirst().orElse(null);
 			if (key != null) {
 				return BlockyBlocks.INSTANCE.isBlockyBlock(gearyWorld, key);
 			}
