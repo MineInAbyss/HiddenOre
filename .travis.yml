@@ -1,6 +1,0 @@
-sudo: false
-language: java
-jdk:
-  - openjdk16
-notifications:
-  email: false

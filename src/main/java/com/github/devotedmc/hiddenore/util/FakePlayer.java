@@ -5,13 +5,17 @@ import com.destroystokyo.paper.Title;
 import com.destroystokyo.paper.block.TargetBlockInfo;
 import com.destroystokyo.paper.entity.TargetEntityInfo;
 import com.destroystokyo.paper.profile.PlayerProfile;
+import io.papermc.paper.connection.PlayerGameConnection;
+import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.entity.LookAnchor;
 import io.papermc.paper.entity.PlayerGiveResult;
 import io.papermc.paper.entity.TeleportFlag;
 import io.papermc.paper.math.Position;
 import io.papermc.paper.threadedregions.scheduler.EntityScheduler;
+import io.papermc.paper.world.damagesource.CombatTracker;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.TriState;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -64,14 +68,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class FakePlayer implements Player {
-	private final ItemStack inHand;
-	private final Location location;
-
-	public FakePlayer(final Location location, final ItemStack inHand) {
-		this.inHand = inHand;
-		this.location = location;
-	}
+public record FakePlayer(Location location, ItemStack inHand) implements Player {
 
 	@Override
 	public String getName() {
@@ -102,12 +99,12 @@ public class FakePlayer implements Player {
 			}
 
 			@Override
-			public HashMap<Integer, ItemStack> addItem(ItemStack...items) throws IllegalArgumentException {
+			public HashMap<Integer, ItemStack> addItem(ItemStack... items) throws IllegalArgumentException {
 				return null;
 			}
 
 			@Override
-			public HashMap<Integer, ItemStack> removeItem(ItemStack...items) throws IllegalArgumentException {
+			public HashMap<Integer, ItemStack> removeItem(ItemStack... items) throws IllegalArgumentException {
 				return null;
 			}
 
@@ -832,6 +829,11 @@ public class FakePlayer implements Player {
 
 	}
 
+	@Override
+	public void setVisualFire(@NotNull TriState triState) {
+
+	}
+
 	/**
 	 * Gets if the entity has visual fire (it will always appear to be on fire).
 	 *
@@ -840,6 +842,11 @@ public class FakePlayer implements Player {
 	@Override
 	public boolean isVisualFire() {
 		return false;
+	}
+
+	@Override
+	public @NotNull TriState getVisualFire() {
+		return null;
 	}
 
 	/**
@@ -941,6 +948,11 @@ public class FakePlayer implements Player {
 	public boolean eject() {
 
 		return false;
+	}
+
+	@Override
+	public @NotNull ItemStack getPickItemStack() {
+		return null;
 	}
 
 	@Override
@@ -1089,6 +1101,11 @@ public class FakePlayer implements Player {
 	@Override
 	public @NotNull Set<Player> getTrackedBy() {
 		return null;
+	}
+
+	@Override
+	public boolean isTrackedBy(@NotNull Player player) {
+		return false;
 	}
 
 	@Override
@@ -1280,7 +1297,7 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
-	public <T extends Projectile> @NotNull T launchProjectile(@NotNull Class<? extends T> projectile, @Nullable Vector velocity, java.util.function.@Nullable Consumer<? super T> function) {
+	public <T extends Projectile> @NotNull T launchProjectile(@NotNull Class<? extends T> projectile, @Nullable Vector velocity, @Nullable Consumer<? super T> function) {
 		return null;
 	}
 
@@ -2174,6 +2191,11 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public @org.jspecify.annotations.Nullable Location getRespawnLocation(boolean b) {
+		return null;
+	}
+
+	@Override
 	public void setBedSpawnLocation(Location location) {
 
 	}
@@ -2425,31 +2447,31 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY,
-			double offsetZ) {
+							  double offsetZ) {
 
 	}
 
 	@Override
 	public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX,
-			double offsetY, double offsetZ) {
+							  double offsetY, double offsetZ) {
 
 	}
 
 	@Override
 	public <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY,
-			double offsetZ, T data) {
+								  double offsetZ, T data) {
 
 	}
 
 	@Override
 	public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX,
-			double offsetY, double offsetZ, T data) {
+								  double offsetY, double offsetZ, T data) {
 
 	}
 
 	@Override
 	public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY,
-			double offsetZ, double extra) {
+							  double offsetZ, double extra) {
 
 	}
 
@@ -2504,6 +2526,11 @@ public class FakePlayer implements Player {
 	@Override
 	public void setDeathScreenScore(int i) {
 
+	}
+
+	@Override
+	public PlayerGameConnection getConnection() {
+		return null;
 	}
 
 	@Override
@@ -2633,6 +2660,16 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void setCooldown(ItemStack itemStack, int i) {
+
+	}
+
+	@Override
+	public int getCooldown(Key key) {
+		return 0;
+	}
+
+	@Override
+	public void setCooldown(Key key, int i) {
 
 	}
 
@@ -3437,6 +3474,11 @@ public class FakePlayer implements Player {
 	}
 
 	@Override
+	public void openVirtualSign(Position position, Side side) {
+
+	}
+
+	@Override
 	public void showDemoScreen() {
 
 	}
@@ -3712,6 +3754,31 @@ public class FakePlayer implements Player {
 	@Override
 	public boolean canUseEquipmentSlot(@NotNull EquipmentSlot slot) {
 		return false;
+	}
+
+	@Override
+	public @NotNull CombatTracker getCombatTracker() {
+		return null;
+	}
+
+	@Override
+	public void setWaypointStyle(@Nullable Key key) {
+
+	}
+
+	@Override
+	public void setWaypointColor(@Nullable Color color) {
+
+	}
+
+	@Override
+	public @NotNull Key getWaypointStyle() {
+		return null;
+	}
+
+	@Override
+	public @Nullable Color getWaypointColor() {
+		return null;
 	}
 
 	@Override
@@ -3993,12 +4060,6 @@ public class FakePlayer implements Player {
 
 	@Override
 	public PlayerProfile getPlayerProfile() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getResourcePackHash() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -4326,5 +4387,20 @@ public class FakePlayer implements Player {
 	@Override
 	public void setFrictionState(@NotNull TriState state) {
 
+	}
+
+	@Override
+	public <T> @org.jspecify.annotations.Nullable T getData(DataComponentType.Valued<T> valued) {
+		return null;
+	}
+
+	@Override
+	public <T> @org.jspecify.annotations.Nullable T getDataOrDefault(DataComponentType.Valued<? extends T> valued, @org.jspecify.annotations.Nullable T t) {
+		return null;
+	}
+
+	@Override
+	public boolean hasData(DataComponentType dataComponentType) {
+		return false;
 	}
 }
