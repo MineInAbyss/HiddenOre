@@ -13,16 +13,16 @@ commands:
       description: HiddenOre allows the hiding of cool drops underground. This reloads the config.
       usage: |
        /hiddenore toggle -- Toggles Ore Generation
-      permission: hiddenore.adv
+      permission: hiddenore
 permissions:
     hiddenore.*:
       description: Gives access to all HiddenOre commands
       default: op
       children:
         hiddenore.adv: true
-    hiddenore.adv:
-      description: Allows access to  HiddenOre commands.
-      default: op
     hiddenore.toggle:
       description: Allows players to toggle Ore Generation.
       default: true
+    hiddenore.admin:
+      description: Allows access to reload or debug commands
+      default: op
