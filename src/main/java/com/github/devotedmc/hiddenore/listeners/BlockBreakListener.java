@@ -4,13 +4,10 @@ import com.github.devotedmc.hiddenore.*;
 import com.github.devotedmc.hiddenore.events.HiddenOreEvent;
 import com.github.devotedmc.hiddenore.events.HiddenOreGenerateEvent;
 import com.github.devotedmc.hiddenore.util.FakePlayer;
-import com.mineinabyss.blocky.api.BlockyBlocks;
-import com.mineinabyss.geary.modules.Geary;
-import com.mineinabyss.geary.papermc.GearyPaperModuleKt;
-import com.mineinabyss.geary.papermc.datastore.DataStoreKt;
-import com.mineinabyss.geary.prefabs.PrefabKey;
 import com.mineinabyss.idofront.textcomponents.IdofrontTextComponents;
 import com.mineinabyss.idofront.textcomponents.MiniMessageHelpersKt;
+import com.nexomc.nexo.api.NexoBlocks;
+import com.nexomc.nexo.api.NexoItems;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -335,9 +332,9 @@ public class BlockBreakListener implements Listener {
 		VeinConfig vc = dropConfig.getVeinNature();
 		Block origin = sourceLocation.getBlock();
 		for (ItemStack xform : items) {
-			BlockData sampleData = xform.getType().isBlock() ? xform.getType().createBlockData() : null;
-			Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGearyWorld(origin.getWorld());
-			PrefabKey prefabKey = DataStoreKt.decodePrefabs(gearyWorld, xform.getPersistentDataContainer()).stream().findFirst().orElse(null);
+			String nexoId = NexoBlocks.isCustomBlock(xform) ? NexoItems.idFromItem(xform) : null;
+			BlockData sampleData = nexoId != null ? NexoBlocks.blockData(nexoId)
+					: xform.getType().isBlock() ? xform.getType().createBlockData() : null;
 			BlockData expressed = sampleData;
 			forceFacing = (vc == null ? -1 : (vc.getForceVisibleTransform() ? 0 : -1 )); // do index traverse on visible faces
 			// to ensure overall fairness but density in discovery, we add walk attempts to cover forced facing reveal
@@ -369,8 +366,8 @@ public class BlockBreakListener implements Listener {
 					HiddenOreGenerateEvent hoge = new HiddenOreGenerateEvent(player, walk, sampleData);
 					Bukkit.getPluginManager().callEvent(hoge);
 					if (!hoge.isCancelled()) {
-						if (prefabKey != null) {
-							BlockyBlocks.INSTANCE.placeBlockyBlock(walk.getLocation(), prefabKey);
+						if (nexoId != null) {
+							NexoBlocks.place(nexoId, walk.getLocation());
 						} else walk.setBlockData(hoge.getTransform(), false);
 						expressed = hoge.getTransform();
 						cPlace --;

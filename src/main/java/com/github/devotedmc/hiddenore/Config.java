@@ -4,7 +4,8 @@ import com.github.devotedmc.hiddenore.listeners.ConfigDeferralListener;
 import com.mineinabyss.components.layer.Layer;
 import com.mineinabyss.features.helpers.LayerUtilsKt;
 import com.mineinabyss.geary.papermc.services.GearyItemService;
-import com.mineinabyss.geary.prefabs.PrefabKey;
+import com.nexomc.nexo.api.NexoItems;
+import com.nexomc.nexo.items.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -339,7 +340,7 @@ public final class Config {
 				ConfigurationSection block = blocks.getConfigurationSection(sourceBlock);
 
 				String cBlockName = block.getString("material");
-				PrefabKey cBlockBlocky = PrefabKey.Companion.ofOrNull(block.getString("blocky", ""));
+				NamespacedKey cBlockNexo = NexoSupport.keyOf(block.getString("nexo", ""));
 				List<NamespacedKey> cBlockKeys = new ArrayList<NamespacedKey>();
 				if (cBlockName == null) {
 					ConfigurationSection cBlockNames = block.getConfigurationSection("materials");
@@ -351,20 +352,19 @@ public final class Config {
 						for (String cBlockN : cBlockNames.getKeys(false)) {
 							ConfigurationSection cBlockS = cBlockNames.getConfigurationSection(cBlockN);
 							String cBlockName2 = cBlockS.getString("material", "");
-							String cBlockBlocky2 = cBlockS.getString("blocky", "");
 							Material cBlockMat = Material.getMaterial(cBlockName2);
-							PrefabKey cBlockPrefab = PrefabKey.Companion.ofOrNull(cBlockBlocky2);
+							NamespacedKey cBlockNexo2 = NexoSupport.keyOf(cBlockS.getString("nexo", ""));
 
-							if (cBlockMat == null && cBlockPrefab == null) {
+							if (cBlockMat == null && cBlockNexo2 == null) {
 								HiddenOre.getPlugin().getLogger()
-										.warning("Failed to find material for " + cBlockName2 + " and Blocky-block for " + cBlockS.getString("blocky", ""));
+										.warning("Failed to find material for " + cBlockName2 + " and Nexo-block for " + cBlockS.getString("nexo", ""));
 								continue;
 							} else {
 								if (cBlockMat != null) {
 									cBlockKeys.add(cBlockMat.getKey());
 								}
-								if (cBlockPrefab != null) {
-									cBlockKeys.add(NamespacedKey.fromString(cBlockPrefab.getFull()));
+								if (cBlockNexo2 != null) {
+									cBlockKeys.add(cBlockNexo2);
 								}
 							}
 						}
@@ -373,21 +373,21 @@ public final class Config {
 					try {
 						Material cBlockMat = Material.getMaterial(cBlockName);
 
-						if (cBlockMat == null && cBlockBlocky == null) {
+						if (cBlockMat == null && cBlockNexo == null) {
 							HiddenOre.getPlugin().getLogger()
-									.warning("Failed to find material for " + cBlockName + " and Blocky-block for " + block.getString("blocky", ""));
+									.warning("Failed to find material for " + cBlockName + " and Nexo-block for " + block.getString("nexo", ""));
 							continue;
 						} else {
 							if (cBlockMat != null) {
 								cBlockKeys.add(cBlockMat.getKey());
 							}
-							if (cBlockBlocky != null) {
-								cBlockKeys.add(NamespacedKey.fromString(cBlockBlocky.getFull()));
+							if (cBlockNexo != null) {
+								cBlockKeys.add(cBlockNexo);
 							}
 						}
 					} catch (Exception e) {
 						HiddenOre.getPlugin().getLogger()
-								.warning("Failed to find material for " + cBlockName + " and Blocky-block for " + block.getString("blocky", ""));
+								.warning("Failed to find material for " + cBlockName + " and Nexo-block for " + block.getString("nexo", ""));
 						continue;
 					}
 				}
@@ -409,7 +409,7 @@ public final class Config {
 					for (String transformL : validTransforms.getKeys(false)) {
 						ConfigurationSection transform = validTransforms.getConfigurationSection(transformL);
 						String tBlockName = transform.getString("material");
-						PrefabKey tBlockyName = PrefabKey.Companion.ofOrNull(transform.getString("blocky", ""));
+						NamespacedKey tBlockNexo = NexoSupport.keyOf(transform.getString("nexo", ""));
 						try {
 							Material tBlockMat = Material.getMaterial(tBlockName);
 							NamespacedKey tBlockKey = tBlockMat == null ? null : tBlockMat.getKey();
@@ -421,8 +421,8 @@ public final class Config {
 									"Failed to find valid transform material for " + tBlockName);
 							continue;
 						}
-						if (tBlockyName != null) {
-							transformThese.add(NamespacedKey.fromString(tBlockyName.getFull()));
+						if (tBlockNexo != null) {
+							transformThese.add(tBlockNexo);
 						}
 					}
 				} else {
@@ -480,6 +480,12 @@ public final class Config {
 			ItemStack prefabItem = gearyItems == null ? null : gearyItems.getItem(drop.getString("prefab", ""));
 			if (prefabItem != null) items.add(prefabItem);
 			else HiddenOre.getPlugin().getLogger().warning("Failed to find prefab " + drop.getString("prefab", ""));
+		}
+		if (drop.isString("nexo")) {
+			String nexoId = drop.getString("nexo", "");
+			ItemBuilder nexoItem = NexoItems.itemFromId(nexoId);
+			if (nexoItem != null) items.add(nexoItem.build());
+			else HiddenOre.getPlugin().getLogger().warning("Failed to find Nexo-item " + nexoId);
 		}
 		boolean transformIfAble = drop.getBoolean("transformIfAble", false);
 		boolean transformDropIfFails = drop.getBoolean("transformDropIfFails", false);
@@ -570,8 +576,12 @@ public final class Config {
 	public static BlockConfig isDropBlock(UUID world, BlockData block, Location blockLocation) {
 		List<BlockConfig> bcs = new ArrayList<>();
 
-		List<BlockConfig> lbcs = instance.layerConfigs.getOrDefault(Optional.ofNullable(layerNameSupplier.getLayerForLocation(blockLocation)).orElse(""), new HashMap<>()).getOrDefault(block.getMaterial().getKey(), new ArrayList<>());
-		if (lbcs != null) bcs.addAll(lbcs);
+		Map<NamespacedKey, List<BlockConfig>> layerBlocks = instance.layerConfigs.getOrDefault(
+				Optional.ofNullable(layerNameSupplier.getLayerForLocation(blockLocation)).orElse(""), new HashMap<>());
+
+		NamespacedKey nexoKey = NexoSupport.keyOf(block);
+		if (nexoKey != null) bcs.addAll(layerBlocks.getOrDefault(nexoKey, new ArrayList<>()));
+		bcs.addAll(layerBlocks.getOrDefault(block.getMaterial().getKey(), new ArrayList<>()));
 
 		if (!bcs.isEmpty()) {
 			// return first match

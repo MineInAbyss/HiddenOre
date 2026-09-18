@@ -178,6 +178,16 @@ drops:
     # You can specify tool and biome, and state modifiers like any other drop.
     tools:
       - wood_pickaxe
+  # A drop can also be a Nexo item, named by its Nexo item id. It stacks with "package" and "materials",
+  # and if the item is a Nexo custom block it can be transformed into just like a vanilla block.
+  #nexo_ore:
+  #  nexo: mineinabyss_bonfire
+  #  minY: 1
+  #  maxY: 60
+  #  chance: 0.001
+  #  transformIfAble: true
+  #  tools:
+  #    - iron_pickaxe
   # Here we define all the potential drops for this material/subtype. Give each "drop config" a friendly name.
   coal_ore:
     # Package is the list of ConfigurationSerializeable ItemStack that should constitutes this drop.
@@ -339,6 +349,9 @@ blocks:
   stone:
     # Name the 'root type' of this block config using its Bukkit material name.
     material: STONE
+    # Instead of (or alongside) 'material', a Nexo custom block can be named by its Nexo item id.
+    # This also works inside 'materials' entries and inside 'validTransforms' entries.
+    #nexo: mineinabyss_bonfire
     # If any of the drops for this block have Transform mode enabled, you can specify a list of blocks that,
     # in addition to the block defined above, can be transformed.
     validTransforms:

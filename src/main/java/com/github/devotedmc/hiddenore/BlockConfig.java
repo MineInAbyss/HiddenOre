@@ -1,15 +1,5 @@
 package com.github.devotedmc.hiddenore;
 
-import com.mineinabyss.blocky.BlockyPlugin;
-import com.mineinabyss.geary.modules.Geary;
-import com.mineinabyss.geary.modules.GearyKt;
-import com.mineinabyss.geary.modules.GearyModuleKt;
-import com.mineinabyss.geary.papermc.GearyPaperModuleKt;
-import com.mineinabyss.geary.papermc.datastore.namespacedkey.GearySerializersExtensionsKt;
-import com.mineinabyss.geary.papermc.datastore.namespacedkey.NamespacedKeyHelpersKt;
-import com.mineinabyss.geary.papermc.tracking.blocks.BlockTrackingKt;
-import com.mineinabyss.geary.papermc.tracking.blocks.BlockTrackingModule;
-import com.mineinabyss.geary.prefabs.PrefabKey;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -44,11 +34,7 @@ public class BlockConfig {
 	
 	public boolean checkBlock(Block check) {
 		if (material.equals(check.getType().getKey())) return true;
-		Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGearyWorld(check.getWorld());
-		if (gearyWorld == null) return false;
-		BlockTrackingModule blockTracking = gearyWorld.getAddon(BlockTrackingKt.getBlockTracking());
-		PrefabKey blockyPrefab = blockTracking.getBlock2Prefab().get(check.getBlockData());
-		return blockyPrefab != null && material.equals(NamespacedKeyHelpersKt.toComponentKey(blockyPrefab.getFull()));
+		return material.equals(NexoSupport.keyOf(check.getBlockData()));
 	}
 	
 	/**
@@ -62,13 +48,10 @@ public class BlockConfig {
 		if (checkBlock(check)) return true;
 		
 		if (validGenTypes == null) return false;
+		NamespacedKey nexoKey = NexoSupport.keyOf(check.getBlockData());
 		for (NamespacedKey wrapper : validGenTypes) {
 			if (wrapper.equals(check.getType().getKey())) return true;
-			Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGearyWorld(check.getWorld());
-			if (gearyWorld == null) return true;
-			BlockTrackingModule blockTracking = gearyWorld.getAddon(BlockTrackingKt.getBlockTracking());
-			PrefabKey blockyPrefab = blockTracking.getBlock2Prefab().get(check.getBlockData());
-			if (blockyPrefab != null && wrapper.toString().equals(blockyPrefab.getFull())) return true;
+			if (wrapper.equals(nexoKey)) return true;
 		}
 		
 		return false;

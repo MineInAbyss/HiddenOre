@@ -24,7 +24,7 @@ repositories {
 dependencies {
 	compileOnly(idofrontLibs.bundles.idofront.core)
 	compileOnly(hiddenlibs.minecraft.plugin.geary.papermc)
-	compileOnly(hiddenlibs.minecraft.plugin.blocky)
+	compileOnly(hiddenlibs.minecraft.plugin.nexo)
 	compileOnly(hiddenlibs.minecraft.plugin.deeperworld)
 	compileOnly(hiddenlibs.minecraft.plugin.mineinabyss.features)
 	compileOnly(hiddenlibs.minecraft.plugin.mineinabyss.components)
@@ -72,7 +72,7 @@ paper {
 			load = BEFORE
 			joinClasspath = true
 		}
-		register("Blocky") {
+		register("Nexo") {
 			required = true
 			load = BEFORE
 			joinClasspath = true
