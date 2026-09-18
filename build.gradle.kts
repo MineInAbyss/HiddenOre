@@ -4,12 +4,12 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.PO
 import net.minecrell.pluginyml.paper.PaperPluginDescription.RelativeLoadOrder.BEFORE
 
 plugins {
-	alias(idofrontLibs.plugins.mia.kotlin.jvm)
-	alias(idofrontLibs.plugins.kotlinx.serialization)
-	alias(idofrontLibs.plugins.mia.papermc)
-	alias(idofrontLibs.plugins.mia.copyjar)
-	alias(idofrontLibs.plugins.mia.publication)
-	alias(idofrontLibs.plugins.mia.autoversion)
+	alias(miaLibs.plugins.mia.kotlin.jvm)
+	alias(miaLibs.plugins.kotlinx.serialization)
+	alias(miaLibs.plugins.mia.papermc)
+	alias(miaLibs.plugins.mia.copyjar)
+	alias(miaLibs.plugins.mia.publication)
+	alias(miaLibs.plugins.mia.autoversion)
 }
 
 
@@ -22,10 +22,10 @@ repositories {
 }
 
 dependencies {
-	compileOnly(idofrontLibs.bundles.idofront.core)
-	compileOnly(hiddenlibs.minecraft.plugin.geary.papermc)
-	compileOnly(hiddenlibs.minecraft.plugin.nexo)
-	compileOnly(hiddenlibs.minecraft.plugin.deeperworld)
+	compileOnly(miaLibs.bundles.idofront.core)
+	compileOnly(miaLibs.geary.papermc)
+	compileOnly(miaLibs.minecraft.plugin.nexo)
+	compileOnly(miaLibs.deeperworld)
 	compileOnly(hiddenlibs.minecraft.plugin.mineinabyss.features)
 	compileOnly(hiddenlibs.minecraft.plugin.mineinabyss.components)
 }

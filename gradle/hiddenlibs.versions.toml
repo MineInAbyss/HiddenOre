@@ -1,6 +1,3 @@
 [libraries]
-minecraft-plugin-geary-papermc = "com.mineinabyss:geary-papermc:0.34"
-minecraft-plugin-deeperworld = "com.mineinabyss:deeperworld:0.14"
-minecraft-plugin-mineinabyss-features = "com.mineinabyss:mineinabyss-features:0.19"
-minecraft-plugin-mineinabyss-components = "com.mineinabyss:mineinabyss-components:0.19"
-minecraft-plugin-nexo = "com.nexomc:nexo:1.29"
+minecraft-plugin-mineinabyss-features = "com.mineinabyss:mineinabyss-features:0.19.4"
+minecraft-plugin-mineinabyss-components = "com.mineinabyss:mineinabyss-components:0.19.5"
