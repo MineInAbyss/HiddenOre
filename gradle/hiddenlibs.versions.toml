@@ -1,5 +1,6 @@
 [libraries]
-minecraft-plugin-geary-papermc = "com.mineinabyss:geary-papermc:0.33.16"
+minecraft-plugin-geary-papermc = "com.mineinabyss:geary-papermc:0.34"
 minecraft-plugin-blocky = "com.mineinabyss:blocky:0.12.1"
-minecraft-plugin-deeperworld = "com.mineinabyss:deeperworld:0.12.0"
-minecraft-plugin-mineinabyss = "com.mineinabyss:mineinabyss:0.17.5"
+minecraft-plugin-deeperworld = "com.mineinabyss:deeperworld:0.14"
+minecraft-plugin-mineinabyss-features = "com.mineinabyss:mineinabyss-features:0.19"
+minecraft-plugin-mineinabyss-components = "com.mineinabyss:mineinabyss-components:0.19"

@@ -5,14 +5,7 @@ pluginManagement {
 		maven("https://repo.mineinabyss.com/snapshots")
 		maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 		maven("https://repo.papermc.io/repository/maven-public/") //Paper
-	}
-
-	val idofrontVersion: String by settings
-	resolutionStrategy {
-		eachPlugin {
-			if (requested.id.id.startsWith("com.mineinabyss.conventions"))
-				useVersion(idofrontVersion)
-		}
+		mavenLocal()
 	}
 }
 
@@ -26,7 +19,15 @@ dependencyResolutionManagement {
 	}
 
 	versionCatalogs {
-		create("idofrontLibs").from("com.mineinabyss:catalog:$idofrontVersion")
+		create("idofrontLibs") {
+			from("com.mineinabyss:catalog:$idofrontVersion")
+			version("minecraft-server", "26.3.build.18-alpha")
+			version("java", "25")
+			version("kotlin", "2.4.20")
+			version("creative", "1.15.1")
+			version("idofront", "2.0")
+			version("gearyPaper", "0.34")
+		}
 		create("hiddenlibs").from(files("gradle/hiddenlibs.versions.toml"))
 	}
 }

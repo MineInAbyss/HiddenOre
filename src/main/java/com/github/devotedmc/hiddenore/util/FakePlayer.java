@@ -1650,6 +1650,11 @@ public record FakePlayer(Location location, ItemStack inHand) implements Player 
 	}
 
 	@Override
+	public void unsetFixedPose() {
+
+	}
+
+	@Override
 	public boolean hasFixedPose() {
 		return false;
 	}
@@ -2504,6 +2509,69 @@ public record FakePlayer(Location location, ItemStack inHand) implements Player 
 	}
 
 	@Override
+	public <T> void spawnParticle(@NotNull Particle particle, double v, double v1, double v2, int i, double v3, double v4, double v5, double v6, double v7, double v8, @Nullable T t, boolean b, Particle.RandomizationType randomizationType) {
+
+	}
+
+	@Override
+	public void resetFlyingTicks() {
+
+	}
+
+	@Override
+	public float getSoundPitch() {
+		return 0f;
+	}
+
+	@Override
+	public float getSoundVolume() {
+		return 0f;
+	}
+
+	@Override
+	public io.papermc.paper.entity.RemovalReason getRemovalReason() {
+		return null;
+	}
+
+	@Override
+	public net.kyori.adventure.sound.Sound.Source soundSource() {
+		return null;
+	}
+
+	@Override
+	public net.kyori.adventure.text.event.HoverEvent<net.kyori.adventure.text.event.HoverEvent.ShowEntity> asHoverEvent(java.util.function.UnaryOperator<net.kyori.adventure.text.event.HoverEvent.ShowEntity> p0) {
+		return null;
+	}
+
+	@Override
+	public net.kyori.adventure.text.object.ObjectContents asObjectContents() {
+		return null;
+	}
+
+	@Override
+	public org.bukkit.Sound getHurtSound(org.bukkit.damage.DamageSource p0) {
+		return null;
+	}
+
+	@Override
+	public org.bukkit.SoundCategory getSoundCategory() {
+		return null;
+	}
+
+	@Override
+	public org.bukkit.event.entity.EntityRemoveEvent.Cause getRemoveEventCause() {
+		return null;
+	}
+
+	@Override
+	public void applySkinToPlayerHeadContents(net.kyori.adventure.text.object.PlayerHeadObjectContents.Builder p0) {
+	}
+
+	@Override
+	public void kill(org.bukkit.damage.DamageSource p0) {
+	}
+
+	@Override
 	public Spigot spigot() {
 		return null;
 	}
@@ -3119,6 +3187,12 @@ public record FakePlayer(Location location, ItemStack inHand) implements Player 
 
 	@Override
 	public void setRotation(float yaw, float pitch) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setRotation(io.papermc.paper.math.Angle yaw, io.papermc.paper.math.Angle pitch) {
 		// TODO Auto-generated method stub
 
 	}

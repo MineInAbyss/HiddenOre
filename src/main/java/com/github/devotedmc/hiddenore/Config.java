@@ -3,12 +3,9 @@ package com.github.devotedmc.hiddenore;
 import com.github.devotedmc.hiddenore.listeners.ConfigDeferralListener;
 import com.mineinabyss.components.layer.Layer;
 import com.mineinabyss.features.helpers.LayerUtilsKt;
-import com.mineinabyss.features.helpers.di.Features;
-import com.mineinabyss.geary.modules.Geary;
-import com.mineinabyss.geary.papermc.GearyPaperModuleKt;
-import com.mineinabyss.geary.papermc.tracking.blocks.BlockTrackingKt;
-import com.mineinabyss.geary.papermc.tracking.items.ItemTrackingKt;
+import com.mineinabyss.geary.papermc.services.GearyItemService;
 import com.mineinabyss.geary.prefabs.PrefabKey;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -479,11 +476,10 @@ public final class Config {
 		List<ItemStack> items = (List<ItemStack>) drop.getList("package", new ArrayList<ItemStack>());
 		items.addAll(drop.getStringList("materials").stream().map(Material::matchMaterial).filter(Objects::nonNull).map(ItemStack::new).toList());
 		if (drop.isString("prefab")) {
-			PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(drop.getString("prefab", ""));
-			if (prefabKey != null) {
-				Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGlobal();
-				items.add(gearyWorld.getAddon(ItemTrackingKt.getItemTracking()).createItem(prefabKey, null));
-			}
+			GearyItemService gearyItems = Bukkit.getServicesManager().load(GearyItemService.class);
+			ItemStack prefabItem = gearyItems == null ? null : gearyItems.getItem(drop.getString("prefab", ""));
+			if (prefabItem != null) items.add(prefabItem);
+			else HiddenOre.getPlugin().getLogger().warning("Failed to find prefab " + drop.getString("prefab", ""));
 		}
 		boolean transformIfAble = drop.getBoolean("transformIfAble", false);
 		boolean transformDropIfFails = drop.getBoolean("transformDropIfFails", false);
@@ -636,6 +632,9 @@ public final class Config {
 	}
 
 	private static LayerNameSupplier initLayerNameSupplier() {
-		return loc -> Features.INSTANCE.getLayers().getWorldManager().getLayers().values().stream().filter(layer -> layer.equals(LayerUtilsKt.getLayer(loc))).map(Layer::getId).findFirst().orElse("");
+		return loc -> {
+			Layer layer = LayerUtilsKt.getLayer(loc);
+			return layer == null ? "" : layer.getId();
+		};
 	}
 }

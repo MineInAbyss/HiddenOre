@@ -2,11 +2,11 @@ package com.github.devotedmc.hiddenore.commands;
 
 import com.github.devotedmc.hiddenore.*;
 import com.github.devotedmc.hiddenore.listeners.PlayerListener;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -20,7 +20,7 @@ import java.util.UUID;
  *
  * @author programmerdan
  */
-public class CommandHandler implements CommandExecutor {
+public class CommandHandler implements BasicCommand {
 
 	final HiddenOre plugin;
 
@@ -28,9 +28,15 @@ public class CommandHandler implements CommandExecutor {
 		plugin = instance;
 	}
 
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		// Check this is /hiddenore
-		if (!cmd.getName().equalsIgnoreCase("hiddenore") || !sender.hasPermission("hiddenore")) {
+	@Override
+	public void execute(CommandSourceStack source, String[] args) {
+		if (!onCommand(source.getSender(), args)) {
+			source.getSender().sendMessage("/hiddenore toggle -- Toggles Ore Generation");
+		}
+	}
+
+	private boolean onCommand(CommandSender sender, String[] args) {
+		if (!sender.hasPermission("hiddenore")) {
 			return false;
 		}
 

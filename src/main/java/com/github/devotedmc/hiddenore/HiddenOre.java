@@ -6,12 +6,10 @@ import com.github.devotedmc.hiddenore.listeners.ExploitListener;
 import com.github.devotedmc.hiddenore.listeners.PlayerListener;
 import com.github.devotedmc.hiddenore.listeners.WorldGenerationListener;
 import com.github.devotedmc.hiddenore.tracking.BreakTracking;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mineinabyss.blocky.api.BlockyBlocks;
-import com.mineinabyss.geary.addons.GearyPhase;
-import com.mineinabyss.geary.modules.GearyModuleKt;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,6 +34,10 @@ public class HiddenOre extends JavaPlugin {
 	public void onEnable() {
 		plugin = this;
 
+		commandHandler = new CommandHandler(plugin);
+		getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> event.registrar()
+				.register("hiddenore", "Reloads the config and toggles ore generation", commandHandler));
+
 		startupFunctions(plugin);
 	}
 
@@ -57,9 +59,6 @@ public class HiddenOre extends JavaPlugin {
 
 		playerListener = new PlayerListener();
 		plugin.getServer().getPluginManager().registerEvents(playerListener, plugin);
-
-		commandHandler = new CommandHandler(plugin);
-		plugin.getCommand("hiddenore").setExecutor(commandHandler);
 
 		worldGen = new ArrayList<>();
 
